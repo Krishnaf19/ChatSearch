@@ -1,0 +1,242 @@
+[
+  {
+    "id": "msg_001",
+    "sender": "Rohan",
+    "text": "Bhai log, next month long weekend aa raha hai! Koi mast road trip plan karein?",
+    "timestamp": "2024-03-10T10:15:00Z"
+  },
+  {
+    "id": "msg_002",
+    "sender": "Priya",
+    "text": "Yaar mujhe break chahiye is brutal sprint ke baad. Goa chalte hain, beach vibes!",
+    "timestamp": "2024-03-10T10:18:22Z"
+  },
+  {
+    "id": "msg_003",
+    "sender": "Rahul",
+    "text": "Bhai Goa October mein bohot humid aur bheed hogi. North chalte hain Himachal side?",
+    "timestamp": "2024-03-10T10:21:40Z"
+  },
+  {
+    "id": "msg_004",
+    "sender": "Kabir",
+    "text": "Shimla ya Manali? Manali has that Solang valley pass and cleaner air.",
+    "timestamp": "2024-03-10T10:25:05Z"
+  },
+  {
+    "id": "msg_005",
+    "sender": "Ananya",
+    "text": "Arre haan Manali sounds incredible! Mere cousin ne Old Manali mein riverside wooden cottage li thi ekdum river ke paas.",
+    "timestamp": "2024-03-10T10:28:15Z"
+  },
+  {
+    "id": "msg_006",
+    "sender": "Priya",
+    "text": "Friday chutti milegi kya par? Last moment manager ka kalesh nahi chahiye mujhe.",
+    "timestamp": "2024-03-10T10:30:50Z"
+  },
+  {
+    "id": "msg_007",
+    "sender": "Rohan",
+    "text": "Haan bhai, Friday ko Dussehra ki official holiday hai, so 3 days sorted bina PTO liye.",
+    "timestamp": "2024-03-10T10:33:10Z"
+  },
+  {
+    "id": "msg_008",
+    "sender": "Ananya",
+    "text": "Airbnb link bhej rahi hoon... check karo balcony ke samne private apple orchard hai.",
+    "timestamp": "2024-03-10T10:36:45Z"
+  },
+  {
+    "id": "msg_009",
+    "sender": "Rahul",
+    "text": "Dekhne mein toh bohot sundar hai. Split karke 2500 per head per night, budget mein hai.",
+    "timestamp": "2024-03-10T10:40:02Z"
+  },
+  {
+    "id": "msg_010",
+    "sender": "Priya",
+    "text": "Done hai meri taraf se! Lock karo jaldi warna dates nikal jayengi.",
+    "timestamp": "2024-03-10T10:42:18Z"
+  },
+  {
+    "id": "msg_011",
+    "sender": "Kabir",
+    "text": "Count me in 100%! Apni gadi se chalenge ya Volvo bus le lein?",
+    "timestamp": "2024-03-10T10:44:30Z"
+  },
+  {
+    "id": "msg_012",
+    "sender": "Rohan",
+    "text": "Card swipe karke cottage book kar di 5 logo ki! Garam jackets pack kar lo sab log!",
+    "timestamp": "2024-03-10T10:48:00Z"
+  },
+  {
+    "id": "msg_013",
+    "sender": "Ananya",
+    "text": "Yesssss maza aayega, finally trip ho rahi hai! So hyped!",
+    "timestamp": "2024-03-10T10:50:12Z"
+  },
+  {
+    "id": "msg_014",
+    "sender": "Kabir",
+    "text": "Legend Rohan bhai! Advance UPI kar dunga raat ko.",
+    "timestamp": "2024-03-10T10:52:00Z"
+  },
+  {
+    "id": "msg_015",
+    "sender": "Priya",
+    "text": "Aaj dinner mein kya mangwaye? Spicy chicken biryani ya sushi?",
+    "timestamp": "2024-03-12T19:10:00Z"
+  },
+  {
+    "id": "msg_016",
+    "sender": "Rohan",
+    "text": "Ghar pe maggi aur chai bana raha hoon. Trip ke liye paise bacha raha hoon haha.",
+    "timestamp": "2024-03-12T19:15:30Z"
+  },
+  {
+    "id": "msg_017",
+    "sender": "Rahul",
+    "text": "Bhai Kabir, free hai kya call ya chat pe baat karne ke liye?",
+    "timestamp": "2024-03-18T21:04:00Z"
+  },
+  {
+    "id": "msg_018",
+    "sender": "Kabir",
+    "text": "Haan bhai bol na, sab theek na? Tension lag raha hai.",
+    "timestamp": "2024-03-18T21:05:45Z"
+  },
+  {
+    "id": "msg_019",
+    "sender": "Rahul",
+    "text": "Honestly, had the most crushing day today. Startup ne humari poori division ko layoff kar diya.",
+    "timestamp": "2024-03-18T21:07:30Z"
+  },
+  {
+    "id": "msg_020",
+    "sender": "Kabir",
+    "text": "Arre yaar... Rahul, this is devastating news. Mujhe zara bhi idea nahi tha company itni shaky hai.",
+    "timestamp": "2024-03-18T21:09:12Z"
+  },
+  {
+    "id": "msg_021",
+    "sender": "Rahul",
+    "text": "2 saal se 60-60 ghante kaam kiya is product pe. Poora drained, khali feel ho raha hai, dimag sunn pad gaya hai.",
+    "timestamp": "2024-03-18T21:12:05Z"
+  },
+  {
+    "id": "msg_022",
+    "sender": "Kabir",
+    "text": "Bhai lambi saans le. You are one of the sharpest engineers. Leadership ka failure hai ye, tera worth isse define nahi hota. Main tere ghar aa raha hoon.",
+    "timestamp": "2024-03-18T21:15:20Z"
+  },
+  {
+    "id": "msg_023",
+    "sender": "Rahul",
+    "text": "Thanks bhai, bohot zaroori tha sunna ye. Mind bohot heavy aur dark zone mein chala gaya tha.",
+    "timestamp": "2024-03-18T21:18:40Z"
+  },
+  {
+    "id": "msg_024",
+    "sender": "Kabir",
+    "text": "15 min mein aa raha hoon garam khana leke. Tension mat le, we will face this together bro.",
+    "timestamp": "2024-03-18T21:20:10Z"
+  },
+  {
+    "id": "msg_025",
+    "sender": "Rahul",
+    "text": "True brother Kabir. Dil se shukriya yaar, means a lot.",
+    "timestamp": "2024-03-18T21:22:00Z"
+  },
+  {
+    "id": "msg_026",
+    "sender": "Ananya",
+    "text": "Guys kal ka IPL cricket match dekha kya? Last over mein kya insane thriller tha!",
+    "timestamp": "2024-03-22T14:30:00Z"
+  },
+  {
+    "id": "msg_027",
+    "sender": "Rohan",
+    "text": "Arre haan bhai, 2 balls pe 10 runs chahiye the aur sixer maar ke jeeta diya!",
+    "timestamp": "2024-03-22T14:35:10Z"
+  },
+  {
+    "id": "msg_028",
+    "sender": "Kabir",
+    "text": "Rahul bhai, Rishikesh outdoor trip kaisa raha? Rafting kiya kya weekend pe?",
+    "timestamp": "2024-04-05T09:02:00Z"
+  },
+  {
+    "id": "msg_029",
+    "sender": "Rahul",
+    "text": "Bhai tu vishwas nahi karega, kal subah river rapids pe kya kaand kiya humne!",
+    "timestamp": "2024-04-05T09:04:15Z"
+  },
+  {
+    "id": "msg_030",
+    "sender": "Kabir",
+    "text": "Sach mein grade 4 stretch pe white water rafting attempt kiya kya?",
+    "timestamp": "2024-04-05T09:06:00Z"
+  },
+  {
+    "id": "msg_031",
+    "sender": "Rahul",
+    "text": "HAAN BHAI! Instructor ne pehle 35 feet upar se river gorge mein cliff jump karwaya! Poora adrenaline rush, dil gale mein aa gaya tha!",
+    "timestamp": "2024-04-05T09:08:40Z"
+  },
+  {
+    "id": "msg_032",
+    "sender": "Kabir",
+    "text": "Bap re bap! Tu toh absolute daredevil hai haha! Paani thanda nahi tha kya?",
+    "timestamp": "2024-04-05T09:10:55Z"
+  },
+  {
+    "id": "msg_033",
+    "sender": "Rahul",
+    "text": "Glacial meltwater, sui jaisa chub raha tha! Fir whirlpools mein raft do baar almost palti. Pure wilderness thrill. Next summer high-altitude mountain pass expedition saath chalenge, koi bahana nahi chalega.",
+    "timestamp": "2024-04-05T09:14:20Z"
+  },
+  {
+    "id": "msg_034",
+    "sender": "Kabir",
+    "text": "Pakka chalenge bhai! Wild mountain terrain conquer karne ka nasha hi alag hai.",
+    "timestamp": "2024-04-05T09:16:10Z"
+  },
+  {
+    "id": "msg_035",
+    "sender": "Priya",
+    "text": "Reminder: 3 baje quarterly planning sync hai, presentations ready rakhna sabhi.",
+    "timestamp": "2024-04-12T11:00:00Z"
+  },
+  {
+    "id": "msg_036",
+    "sender": "Rohan",
+    "text": "Drive folder pe slides update kardi hain maine.",
+    "timestamp": "2024-04-12T11:15:00Z"
+  },
+  {
+    "id": "msg_037",
+    "sender": "Kabir",
+    "text": "Weekend pe Murthal chalein kya late night drive pe? Aloo pyaaz ke paranthe aur makkhan!",
+    "timestamp": "2024-04-18T22:30:00Z"
+  },
+  {
+    "id": "msg_038",
+    "sender": "Ananya",
+    "text": "Haan bhai white butter wale garam paranthe aur kulhad wali chai, best combination at 2 AM.",
+    "timestamp": "2024-04-18T22:34:10Z"
+  },
+  {
+    "id": "msg_039",
+    "sender": "Rahul",
+    "text": "Count me in too! Thoda mind fresh ho jayega drive karke.",
+    "timestamp": "2024-04-18T22:38:00Z"
+  },
+  {
+    "id": "msg_040",
+    "sender": "Rohan",
+    "text": "Main gaadi nikalta hoon 11:30 PM, sabko pick kar lunga!",
+    "timestamp": "2024-04-18T22:40:15Z"
+  }
+]

@@ -1,0 +1,15 @@
+{
+  "name": "searchchat-monorepo",
+  "version": "1.0.0",
+  "description": "Two-Tier Group Chat Search System",
+  "scripts": {
+    "dev": "npm run dev:backend & npm run dev:frontend",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "demo": "cd backend && npm run demo",
+    "install:all": "npm --prefix backend install && npm --prefix frontend install"
+  },
+  "keywords": ["search", "nlp", "two-tier", "embeddings", "chat"],
+  "author": "",
+  "license": "ISC"
+}
