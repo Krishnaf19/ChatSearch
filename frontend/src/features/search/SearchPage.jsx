@@ -153,57 +153,60 @@ export default function SearchPage() {
 
   return (
     <div className="search-page">
-      {/* Header */}
-      <header className="page-header">
-        <div className="brand">
-          <div className="brand-icon">
-            <MessageSquare size={18} />
+      {/* Sticky Header and Navigation Wrapper */}
+      <div className="sticky-header-wrapper">
+        {/* Header */}
+        <header className="page-header">
+          <div className="brand">
+            <div className="brand-icon">
+              <MessageSquare size={18} />
+            </div>
+            <h1>searchChat</h1>
           </div>
-          <h1>searchChat</h1>
-        </div>
 
-        <div className="header-actions">
-          <span className="sync-badge">📦 5,000 chats synced</span>
+          <div className="header-actions">
+            <span className="sync-badge">📦 5,000 chats synced</span>
+            <button
+              className="reindex-btn"
+              onClick={() => dispatch(runIngest())}
+              disabled={ingestStatus === 'loading'}
+            >
+              <RefreshCw size={13} className={ingestStatus === 'loading' ? 'spinning' : ''} />
+              {ingestStatus === 'loading' ? 'Indexing\u2026' : 'Re-index'}
+            </button>
+          </div>
+        </header>
+
+        {/* Navigation Tabs */}
+        <nav className="nav-tabs-container">
           <button
-            className="reindex-btn"
-            onClick={() => dispatch(runIngest())}
-            disabled={ingestStatus === 'loading'}
+            type="button"
+            className={`nav-tab-btn${activeTab === 'search' ? ' active' : ''}`}
+            onClick={() => dispatch(setActiveTab('search'))}
           >
-            <RefreshCw size={13} className={ingestStatus === 'loading' ? 'spinning' : ''} />
-            {ingestStatus === 'loading' ? 'Indexing\u2026' : 'Re-index'}
+            <Search size={15} />
+            <span>Search Conversations</span>
           </button>
-        </div>
-      </header>
-
-      {/* Navigation Tabs */}
-      <nav className="nav-tabs-container">
-        <button
-          type="button"
-          className={`nav-tab-btn${activeTab === 'search' ? ' active' : ''}`}
-          onClick={() => dispatch(setActiveTab('search'))}
-        >
-          <Search size={15} />
-          <span>Search Conversations</span>
-        </button>
-        <button
-          type="button"
-          className={`nav-tab-btn${activeTab === 'memories' ? ' active' : ''}`}
-          onClick={() => dispatch(setActiveTab('memories'))}
-        >
-          <Sparkles size={15} />
-          <span>Group Highlights & &ldquo;On This Day&rdquo;</span>
-          <span className="nav-tab-badge">Memories</span>
-        </button>
-        <button
-          type="button"
-          className={`nav-tab-btn${activeTab === 'leaderboard' ? ' active' : ''}`}
-          onClick={() => dispatch(setActiveTab('leaderboard'))}
-        >
-          <Trophy size={15} />
-          <span>Topics Leaderboard</span>
-          <span className="nav-tab-badge">Top Subjects</span>
-        </button>
-      </nav>
+          <button
+            type="button"
+            className={`nav-tab-btn${activeTab === 'memories' ? ' active' : ''}`}
+            onClick={() => dispatch(setActiveTab('memories'))}
+          >
+            <Sparkles size={15} />
+            <span>Group Highlights & &ldquo;On This Day&rdquo;</span>
+            <span className="nav-tab-badge">Memories</span>
+          </button>
+          <button
+            type="button"
+            className={`nav-tab-btn${activeTab === 'leaderboard' ? ' active' : ''}`}
+            onClick={() => dispatch(setActiveTab('leaderboard'))}
+          >
+            <Trophy size={15} />
+            <span>Topics Leaderboard</span>
+            <span className="nav-tab-badge">Top Subjects</span>
+          </button>
+        </nav>
+      </div>
 
       {activeTab === 'memories' ? (
         <MemoriesPage />
