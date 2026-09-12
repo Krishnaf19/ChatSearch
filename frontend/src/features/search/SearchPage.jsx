@@ -6,8 +6,10 @@ import {
   fetchAllMessages,
   runIngest,
   setQuery,
-  clearSearch
+  clearSearch,
+  setActiveTab
 } from './searchSlice';
+import MemoriesPage from '../memories/MemoriesPage';
 import {
   Sparkles,
   Zap,
@@ -15,12 +17,14 @@ import {
   MessageSquare,
   X,
   CalendarCheck,
+  Calendar,
   Compass,
   HeartCrack,
   Coffee,
   BriefcaseBusiness,
   ChevronDown,
-  SearchX
+  SearchX,
+  Search
 } from 'lucide-react';
 
 const QUICK_TOPICS = [
@@ -91,7 +95,8 @@ export default function SearchPage() {
     status,
     response,
     ingestStatus,
-    ingestMessage
+    ingestMessage,
+    activeTab
   } = useSelector((state) => state.search);
 
   const [activeCard, setActiveCard] = useState('manali');
@@ -167,7 +172,32 @@ export default function SearchPage() {
         </div>
       </header>
 
-      {/* Search */}
+      {/* Navigation Tabs */}
+      <nav className="nav-tabs-container">
+        <button
+          type="button"
+          className={`nav-tab-btn${activeTab === 'search' ? ' active' : ''}`}
+          onClick={() => dispatch(setActiveTab('search'))}
+        >
+          <Search size={15} />
+          <span>Search Conversations</span>
+        </button>
+        <button
+          type="button"
+          className={`nav-tab-btn${activeTab === 'memories' ? ' active' : ''}`}
+          onClick={() => dispatch(setActiveTab('memories'))}
+        >
+          <Sparkles size={15} />
+          <span>Group Highlights & &ldquo;On This Day&rdquo;</span>
+          <span className="nav-tab-badge">Memories</span>
+        </button>
+      </nav>
+
+      {activeTab === 'memories' ? (
+        <MemoriesPage />
+      ) : (
+        <>
+          {/* Search */}
       <section className="search-section">
         <div className="search-intro">
           <h2>Find the right conversation</h2>
@@ -366,6 +396,8 @@ export default function SearchPage() {
           </div>
         )}
       </section>
+        </>
+      )}
     </div>
   );
 }

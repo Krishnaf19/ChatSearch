@@ -51,6 +51,22 @@ export const fetchAllMessages = createAsyncThunk(
 );
 
 /**
+ * Async thunk to fetch memories (On This Day & Highlights)
+ */
+export const fetchMemories = createAsyncThunk(
+  'search/fetchMemories',
+  async (date, { rejectWithValue }) => {
+    try {
+      const url = date ? `${API_BASE}/memories?date=${encodeURIComponent(date)}` : `${API_BASE}/memories`;
+      const response = await axios.get(url);
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.error || err.message || 'Failed to fetch memories');
+    }
+  }
+);
+
+/**
  * Async thunk to trigger ingestion
  */
 export const runIngest = createAsyncThunk(
@@ -122,7 +138,13 @@ const initialState = {
   ingestStatus: 'idle',
   ingestMessage: null,
 
-  activeTab: 'dashboard', // Default to 'dashboard' so user immediately sees the great dashboard!
+  // Feature 2: Memories & Highlights
+  memoriesData: null,
+  memoriesLoading: false,
+  memoriesError: null,
+  selectedMemoryDate: '2024-03-10',
+
+  activeTab: 'search', // 'search', 'memories', 'leaderboard'
   timelineFilter: 'all',
   timelineSearch: ''
 };
@@ -142,6 +164,9 @@ const searchSlice = createSlice({
     },
     setActiveTab: (state, action) => {
       state.activeTab = action.payload;
+    },
+    setSelectedMemoryDate: (state, action) => {
+      state.selectedMemoryDate = action.payload;
     },
     setTimelineFilter: (state, action) => {
       state.timelineFilter = action.payload;
@@ -206,6 +231,21 @@ const searchSlice = createSlice({
         state.allMessagesLoading = false;
       });
 
+    // Memories lifecycle
+    builder
+      .addCase(fetchMemories.pending, (state) => {
+        state.memoriesLoading = true;
+        state.memoriesError = null;
+      })
+      .addCase(fetchMemories.fulfilled, (state, action) => {
+        state.memoriesLoading = false;
+        state.memoriesData = action.payload;
+      })
+      .addCase(fetchMemories.rejected, (state, action) => {
+        state.memoriesLoading = false;
+        state.memoriesError = action.payload || 'Failed to fetch memories';
+      });
+
     // Ingest lifecycle
     builder
       .addCase(runIngest.pending, (state) => {
@@ -227,6 +267,7 @@ export const {
   setQuery,
   clearSearch,
   setActiveTab,
+  setSelectedMemoryDate,
   setTimelineFilter,
   setTimelineSearch
 } = searchSlice.actions;
