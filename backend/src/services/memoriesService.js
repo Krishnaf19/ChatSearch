@@ -3,9 +3,7 @@ const path = require('path');
 
 const PROCESSED_PATH = path.join(__dirname, '../../data/processed/messages.json');
 
-/**
- * Loads processed messages safely
- */
+
 function loadMessages() {
   if (!fs.existsSync(PROCESSED_PATH)) return [];
   try {
@@ -16,9 +14,7 @@ function loadMessages() {
   }
 }
 
-/**
- * Extracts surrounding context window around a message index
- */
+
 function getContextWindow(messages, centerIndex, windowSize = 2) {
   const start = Math.max(0, centerIndex - windowSize);
   const end = Math.min(messages.length, centerIndex + windowSize + 1);
@@ -33,9 +29,7 @@ function getContextWindow(messages, centerIndex, windowSize = 2) {
   }));
 }
 
-/**
- * Helper to calculate month/day difference or relative time
- */
+
 function getRelativeTimeDescription(msgDate, targetDate = new Date()) {
   const diffMs = targetDate.getTime() - msgDate.getTime();
   const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
@@ -54,9 +48,7 @@ function getRelativeTimeDescription(msgDate, targetDate = new Date()) {
   return 'Recent';
 }
 
-/**
- * Gets "On This Day" memories for a given date (or relative timeframes like 1 year, 6 months, 1 month)
- */
+
 function getMemories(queryDateStr = null) {
   const messages = loadMessages();
   if (!messages.length) {
@@ -67,16 +59,16 @@ function getMemories(queryDateStr = null) {
     };
   }
 
-  // Determine query reference date
+
   let refDate = queryDateStr ? new Date(queryDateStr) : new Date();
   if (isNaN(refDate.getTime())) {
     refDate = new Date();
   }
 
-  const queryMonth = refDate.getUTCMonth(); // 0-11
-  const queryDay = refDate.getUTCDate();   // 1-31
+  const queryMonth = refDate.getUTCMonth(); 
+  const queryDay = refDate.getUTCDate();   
 
-  // 1. Find exact calendar month+day matches (any past year)
+
   const sameDayMatches = [];
   messages.forEach((msg, idx) => {
     const d = new Date(msg.timestamp);
@@ -92,7 +84,7 @@ function getMemories(queryDateStr = null) {
     }
   });
 
-  // 2. Build Curated Group Highlights / Milestones across the chat history
+
   const milestoneIndices = [
     { idx: 11, title: 'Manali Trip Lock-In', subtitle: 'The gang locked in the Riverside Wooden Cottage in Old Manali!', category: 'Group Milestone', badge: 'Decision Made' },
     { idx: 20, title: 'Rahul\'s Venting & Brotherhood', subtitle: 'Kabir rushed over with dinner when Rahul needed support.', category: 'Heartfelt Memory', badge: 'Support & Care' },
@@ -120,7 +112,7 @@ function getMemories(queryDateStr = null) {
       };
     });
 
-  // 3. Extract unique available dates from dataset for interactive browsing
+  
   const dateMap = {};
   messages.forEach((m) => {
     const d = new Date(m.timestamp);
@@ -142,7 +134,6 @@ function getMemories(queryDateStr = null) {
 
   const availableDates = Object.values(dateMap);
 
-  // 4. Format onThisDay results
   const onThisDayResults = sameDayMatches.map((match) => ({
     id: `otd_${match.message.id}`,
     title: `Memory from ${match.timeframe}`,

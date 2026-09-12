@@ -1,8 +1,4 @@
-/* ============================================
-   searchChat — Clean Minimal UI
-   ============================================ */
 
-/* Layout */
 .app-container {
   min-height: 100vh;
   background: #fafafa;
@@ -14,7 +10,6 @@
   padding: 32px 18px 80px;
 }
 
-/* ---- Header ---- */
 .page-header {
   display: flex;
   align-items: center;
@@ -88,7 +83,6 @@
   cursor: not-allowed;
 }
 
-/* ---- Search Bar ---- */
 .search-section {
   margin-bottom: 28px;
   padding-top: 18px;
@@ -184,7 +178,6 @@
   background: #333;
 }
 
-/* Ingest toast */
 .ingest-toast {
   margin-top: 10px;
   padding: 8px 14px;
@@ -196,7 +189,6 @@
   font-weight: 500;
 }
 
-/* ---- Quick Topics ---- */
 .quick-topics {
   margin-bottom: 32px;
 }
@@ -299,7 +291,6 @@
   color: rgba(255, 255, 255, 0.5);
 }
 
-/* ---- Results ---- */
 .results-section {
   margin-bottom: 36px;
 }
@@ -334,7 +325,6 @@
   color: #374151;
 }
 
-/* Loading */
 .loading-indicator {
   display: flex;
   align-items: center;
@@ -354,7 +344,6 @@
   to { transform: rotate(360deg); }
 }
 
-/* Result thread card */
 .thread-card {
   background: #fff;
   border: 1px solid #eee;
@@ -449,7 +438,6 @@
   color: #444;
 }
 
-/* Context thread */
 .context-thread {
   background: #fafafa;
   padding: 14px 20px 18px;
@@ -529,7 +517,6 @@
   line-height: 1.4;
 }
 
-/* ---- Pagination & View More ---- */
 .view-more-container {
   display: flex;
   justify-content: center;
@@ -570,7 +557,6 @@
   color: #888;
 }
 
-/* ---- No Results Card ---- */
 .no-results-card {
   background: #fff;
   border: 1px dashed #d1d5db;
@@ -689,7 +675,6 @@
   border-color: #111;
 }
 
-/* Message list (replacing heavy table) */
 .message-list {
   display: flex;
   flex-direction: column;
@@ -785,7 +770,6 @@
   border-color: #111;
 }
 
-/* ---- Navigation Tabs ---- */
 .nav-tabs-container {
   display: flex;
   align-items: center;
@@ -836,9 +820,6 @@
   color: #fff;
 }
 
-/* ============================================
-   Feature 2: Memories & "On This Day" Styling
-   ============================================ */
 .memories-container {
   margin-top: 10px;
 }
@@ -1124,7 +1105,6 @@
   text-decoration: underline;
 }
 
-/* Surrounding context in memories */
 .memory-thread-context {
   margin-top: 12px;
   border-top: 1px dashed #e2e8f0;
@@ -1229,9 +1209,6 @@
   font-size: 13px;
 }
 
-/* ============================================
-   Feature 3: Topics Leaderboard Styling
-   ============================================ */
 .leaderboard-container {
   margin-top: 10px;
 }
@@ -1270,7 +1247,6 @@
   max-width: 700px;
 }
 
-/* Stat Cards */
 .leaderboard-stat-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -1325,7 +1301,6 @@
   color: #94a3b8;
 }
 
-/* Leaderboard Section */
 .leaderboard-section {
   margin-bottom: 32px;
 }
@@ -1446,7 +1421,6 @@
   color: #64748b;
 }
 
-/* Meter */
 .topic-volume-meter {
   margin-bottom: 14px;
 }
@@ -1481,7 +1455,6 @@
   transition: width 0.3s ease;
 }
 
-/* Topic Breakdown */
 .topic-breakdown-row {
   display: flex;
   flex-wrap: wrap;
@@ -1615,7 +1588,6 @@
   border-color: #0f172a;
 }
 
-/* Members Grid */
 .members-grid-cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -1729,7 +1701,6 @@
   border-color: #0f172a;
 }
 
-/* ---- Responsive ---- */
 @media (max-width: 640px) {
   .search-page {
     padding: 20px 16px 60px;

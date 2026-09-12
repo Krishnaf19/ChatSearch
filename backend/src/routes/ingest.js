@@ -11,18 +11,13 @@ const EMBEDDINGS_DIR = path.join(__dirname, '../../data/embeddings');
 const PROCESSED_PATH = path.join(PROCESSED_DIR, 'messages.json');
 const EMBEDDINGS_PATH = path.join(EMBEDDINGS_DIR, 'message_embeddings.json');
 
-/**
- * Ensures required directories exist
- */
+
 function ensureDirectories() {
   if (!fs.existsSync(PROCESSED_DIR)) fs.mkdirSync(PROCESSED_DIR, { recursive: true });
   if (!fs.existsSync(EMBEDDINGS_DIR)) fs.mkdirSync(EMBEDDINGS_DIR, { recursive: true });
 }
 
-/**
- * POST /api/ingest
- * Ingests raw chat export, tags messages with emotion & topic, and generates embeddings.
- */
+
 router.post('/', async (req, res) => {
   try {
     if (!fs.existsSync(RAW_PATH)) {
@@ -37,7 +32,7 @@ router.post('/', async (req, res) => {
     const embeddingsMap = {};
 
     for (const item of rawData) {
-      // 1. Tag emotion and topic
+    
       const tagResult = await tagMessage(item.text);
       
       const processedMsg = {
@@ -50,12 +45,10 @@ router.post('/', async (req, res) => {
       };
       processedMessages.push(processedMsg);
 
-      // 2. Compute embedding vector
       const vector = await embedText(item.text);
       embeddingsMap[item.id] = vector;
     }
 
-    // 3. Persist to flat JSON files
     fs.writeFileSync(PROCESSED_PATH, JSON.stringify(processedMessages, null, 2));
     fs.writeFileSync(EMBEDDINGS_PATH, JSON.stringify(embeddingsMap, null, 2));
 

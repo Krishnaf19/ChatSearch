@@ -3,9 +3,6 @@ import axios from 'axios';
 
 const API_BASE = '/api';
 
-/**
- * Async thunk to execute search
- */
 export const executeSearch = createAsyncThunk(
   'search/executeSearch',
   async (query, { rejectWithValue }) => {
@@ -20,9 +17,7 @@ export const executeSearch = createAsyncThunk(
   }
 );
 
-/**
- * Async thunk to fetch system status
- */
+
 export const fetchStatus = createAsyncThunk(
   'search/fetchStatus',
   async (_, { rejectWithValue }) => {
@@ -35,9 +30,7 @@ export const fetchStatus = createAsyncThunk(
   }
 );
 
-/**
- * Async thunk to fetch all messages
- */
+
 export const fetchAllMessages = createAsyncThunk(
   'search/fetchAllMessages',
   async (_, { rejectWithValue }) => {
@@ -50,9 +43,7 @@ export const fetchAllMessages = createAsyncThunk(
   }
 );
 
-/**
- * Async thunk to fetch memories (On This Day & Highlights)
- */
+
 export const fetchMemories = createAsyncThunk(
   'search/fetchMemories',
   async (date, { rejectWithValue }) => {
@@ -66,9 +57,7 @@ export const fetchMemories = createAsyncThunk(
   }
 );
 
-/**
- * Async thunk to fetch topics and member leaderboard
- */
+
 export const fetchLeaderboard = createAsyncThunk(
   'search/fetchLeaderboard',
   async (_, { rejectWithValue }) => {
@@ -81,9 +70,7 @@ export const fetchLeaderboard = createAsyncThunk(
   }
 );
 
-/**
- * Async thunk to trigger ingestion
- */
+
 export const runIngest = createAsyncThunk(
   'search/runIngest',
   async (_, { dispatch, rejectWithValue }) => {
@@ -98,7 +85,7 @@ export const runIngest = createAsyncThunk(
   }
 );
 
-// Initial mock queries to seed the dashboard history nicely
+
 const DEFAULT_SEARCH_HISTORY = [
   {
     query: 'manali trip kab decide hua',
@@ -153,18 +140,16 @@ const initialState = {
   ingestStatus: 'idle',
   ingestMessage: null,
 
-  // Feature 2: Memories & Highlights
   memoriesData: null,
   memoriesLoading: false,
   memoriesError: null,
   selectedMemoryDate: '2024-03-10',
 
-  // Feature 3: Topics Leaderboard
   leaderboardData: null,
   leaderboardLoading: false,
   leaderboardError: null,
 
-  activeTab: 'search', // 'search', 'memories', 'leaderboard'
+  activeTab: 'search', 
   timelineFilter: 'all',
   timelineSearch: ''
 };
@@ -196,7 +181,6 @@ const searchSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    // Search lifecycle
     builder
       .addCase(executeSearch.pending, (state) => {
         state.status = 'loading';
@@ -206,7 +190,7 @@ const searchSlice = createSlice({
         state.status = 'succeeded';
         state.response = action.payload;
         
-        // Record in search history for the dashboard
+
         state.searchHistory.unshift({
           query: action.payload.query,
           tierUsed: action.payload.tierUsed,
@@ -225,7 +209,7 @@ const searchSlice = createSlice({
         state.error = action.payload || 'An error occurred during search';
       });
 
-    // Status lifecycle
+   
     builder
       .addCase(fetchStatus.pending, (state) => {
         state.systemStatusLoading = true;
@@ -238,7 +222,7 @@ const searchSlice = createSlice({
         state.systemStatusLoading = false;
       });
 
-    // All messages lifecycle
+    
     builder
       .addCase(fetchAllMessages.pending, (state) => {
         state.allMessagesLoading = true;
@@ -251,7 +235,6 @@ const searchSlice = createSlice({
         state.allMessagesLoading = false;
       });
 
-    // Memories lifecycle
     builder
       .addCase(fetchMemories.pending, (state) => {
         state.memoriesLoading = true;
@@ -266,7 +249,6 @@ const searchSlice = createSlice({
         state.memoriesError = action.payload || 'Failed to fetch memories';
       });
 
-    // Leaderboard lifecycle
     builder
       .addCase(fetchLeaderboard.pending, (state) => {
         state.leaderboardLoading = true;
@@ -281,7 +263,6 @@ const searchSlice = createSlice({
         state.leaderboardError = action.payload || 'Failed to fetch leaderboard';
       });
 
-    // Ingest lifecycle
     builder
       .addCase(runIngest.pending, (state) => {
         state.ingestStatus = 'loading';

@@ -2,13 +2,12 @@ const path = require('path');
 const fs = require('fs');
 const { cosineSimilarity } = require('../utils/similarity');
 const { embedText, isLocalProvider } = require('./embeddings');
-
 const PROCESSED_DATA_PATH = path.join(__dirname, '../../data/processed/messages.json');
 const EMBEDDINGS_DATA_PATH = path.join(__dirname, '../../data/embeddings/message_embeddings.json');
 
-// Combined English and Hinglish Stop Words
+
 const STOP_WORDS = new Set([
-  // English
+
   'a', 'about', 'above', 'after', 'again', 'against', 'all', 'am', 'an', 'and',
   'any', 'are', 'aren\'t', 'as', 'at', 'be', 'because', 'been', 'before', 'being',
   'below', 'between', 'both', 'but', 'by', 'can', 'can\'t', 'cannot', 'could',
@@ -27,8 +26,6 @@ const STOP_WORDS = new Set([
   'why', 'with', 'won\'t', 'would', 'you', 'you\'d', 'you\'ll', 'you\'re', 'you\'ve',
   'your', 'yours', 'yourself', 'yourselves', 'talk', 'talks', 'conversation', 'conversations',
   'tell', 'chat', 'chats', 'message', 'messages', 'decide', 'decided',
-
-  // Hinglish common functional & filler particles
   'ke', 'sath', 'saath', 'se', 'ka', 'ki', 'ko', 'mein', 'me', 'pe', 'par',
   'hai', 'hain', 'tha', 'the', 'thi', 'bhai', 'yaar', 'kab', 'kya', 'kaise',
   'kaha', 'kahan', 'aur', 'hum', 'meri', 'mera', 'mere', 'apna', 'apne',
@@ -36,9 +33,7 @@ const STOP_WORDS = new Set([
   'bhi', 'toh', 'to', 'ho', 'gaya', 'gayi', 'gaye', 'kisne', 'kisko', 'woh', 'yeh'
 ]);
 
-/**
- * Loads processed messages from disk
- */
+
 function getMessages() {
   if (!fs.existsSync(PROCESSED_DATA_PATH)) {
     return [];
@@ -46,9 +41,7 @@ function getMessages() {
   return JSON.parse(fs.readFileSync(PROCESSED_DATA_PATH, 'utf-8'));
 }
 
-/**
- * Loads embeddings from disk
- */
+
 function getEmbeddings() {
   if (!fs.existsSync(EMBEDDINGS_DATA_PATH)) {
     return {};
@@ -56,9 +49,6 @@ function getEmbeddings() {
   return JSON.parse(fs.readFileSync(EMBEDDINGS_DATA_PATH, 'utf-8'));
 }
 
-/**
- * Extracts person name from English or Hinglish query if present in known senders
- */
 function extractPerson(query, knownSenders) {
   const clean = query.toLowerCase().replace(/[^a-z0-9\s]/g, ' ');
   const words = clean.split(/\s+/).filter(Boolean);
@@ -66,11 +56,11 @@ function extractPerson(query, knownSenders) {
   for (const sender of knownSenders) {
     const sLower = sender.toLowerCase();
     
-    // Check direct token match
+    
     if (words.includes(sLower)) {
       return sender;
     }
-    // Check English / Hinglish prepositional phrases
+    
     if (
       clean.includes(`with ${sLower}`) ||
       clean.includes(`from ${sLower}`) ||
@@ -88,9 +78,7 @@ function extractPerson(query, knownSenders) {
   return null;
 }
 
-/**
- * Extracts searchable keywords from query, removing punctuation, stop words, and sender names
- */
+
 function extractKeywords(query, personName) {
   const clean = query.toLowerCase().replace(/[^a-z0-9\s]/g, ' ');
   const tokens = clean.split(/\s+/).filter(Boolean);
@@ -103,9 +91,7 @@ function extractKeywords(query, personName) {
   });
 }
 
-/**
- * Expands context by getting windowSize messages before and after matched message index
- */
+
 function expandContext(matchedId, allMessages, windowSize = 5) {
   const index = allMessages.findIndex((m) => m.id === matchedId);
   if (index === -1) return [];
@@ -119,16 +105,11 @@ function expandContext(matchedId, allMessages, windowSize = 5) {
   }));
 }
 
-/**
- * Executes Two-Tier Search Pipeline with calibrated relevance filters and edge case protection.
- * Options: { page = 1, limit = 0 }
- * If limit is 0 (or omitted), all valid matches are returned, and totalAvailable / hasMore are calculated.
- */
+
 async function searchChat(query, options = {}) {
   const page = Math.max(1, parseInt(options.page, 10) || 1);
   const limit = Math.max(0, parseInt(options.limit, 10) || 0);
 
-  // Edge case 1: Empty, whitespace or too short queries
   if (!query || typeof query !== 'string' || !query.trim()) {
     return {
       query: '',
@@ -175,21 +156,19 @@ async function searchChat(query, options = {}) {
     };
   }
 
-  // 1. Discover known senders
+  
   const knownSenders = Array.from(new Set(allMessages.map((m) => m.sender)));
 
-  // 2. Extract Person Filter
   const person = extractPerson(trimmedQuery, knownSenders);
 
-  // Filter candidates if person is mentioned
+ 
   const candidatePool = person
     ? allMessages.filter((m) => m.sender.toLowerCase() === person.toLowerCase())
     : allMessages;
 
-  // 3. Extract Keywords
   const keywords = extractKeywords(trimmedQuery, person);
 
-  // Edge case 2: Only person is specified and no other keywords or concepts
+  
   if (person && keywords.length === 0 && !hasEmoji) {
     const personMessages = candidatePool.slice(0, 10);
     const results = personMessages.map((msg) => ({
@@ -217,9 +196,7 @@ async function searchChat(query, options = {}) {
     };
   }
 
-  // ----------------------------------------------------
-  // TIER 1: Keyword Search (Text, Topic, Emotion)
-  // ----------------------------------------------------
+
   const keywordHits = [];
 
   if (keywords.length > 0) {
@@ -231,7 +208,7 @@ async function searchChat(query, options = {}) {
       let matchedKeywords = [];
 
       for (const kw of keywords) {
-        // Keyword match against text (with word boundary for short 2-char tokens) or topic / emotion stem
+        
         const matchesText = kw.length <= 2
           ? new RegExp(`\\b${kw}\\b`, 'i').test(textLower)
           : textLower.includes(kw);
@@ -258,7 +235,7 @@ async function searchChat(query, options = {}) {
     }
   }
 
-  // If Tier 1 found matches, return matches with pagination support
+
   if (keywordHits.length > 0) {
     keywordHits.sort((a, b) => b.score - a.score);
 
@@ -287,9 +264,7 @@ async function searchChat(query, options = {}) {
     };
   }
 
-  // ----------------------------------------------------
-  // TIER 2: Semantic / Tone Search (Embeddings + Topic)
-  // ----------------------------------------------------
+
   const queryVector = await embedText(trimmedQuery);
   const semanticScores = [];
 
@@ -305,16 +280,15 @@ async function searchChat(query, options = {}) {
     }
   }
 
-  // Sort by highest cosine similarity
   semanticScores.sort((a, b) => b.score - a.score);
 
-  // Strictly calibrate threshold to eliminate false positives on unmentioned/unrelated queries
+
   const isLocal = isLocalProvider();
   const SEMANTIC_MIN_THRESHOLD = isLocal ? 0.40 : 0.30;
 
   const topScore = semanticScores.length > 0 ? semanticScores[0].score : 0;
 
-  // If the top score is below the confidence threshold, there are NO true matches
+
   if (topScore < SEMANTIC_MIN_THRESHOLD) {
     return {
       query: trimmedQuery,
@@ -330,7 +304,7 @@ async function searchChat(query, options = {}) {
     };
   }
 
-  // Adaptive cutoff: filter out matches that fall off sharply from top match
+  
   const adaptiveCutoff = Math.max(SEMANTIC_MIN_THRESHOLD, topScore * 0.50);
   const validSemanticHits = semanticScores.filter((item) => item.score >= adaptiveCutoff);
 

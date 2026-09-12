@@ -153,7 +153,7 @@ export default function SearchPage() {
 
   return (
     <div className="search-page">
-      {/* Header */}
+   
       <header className="page-header">
         <div className="brand">
           <div className="brand-icon">
@@ -175,7 +175,7 @@ export default function SearchPage() {
         </div>
       </header>
 
-      {/* Navigation Tabs */}
+
       <nav className="nav-tabs-container">
         <button
           type="button"
@@ -211,7 +211,7 @@ export default function SearchPage() {
         <LeaderboardPage />
       ) : (
         <>
-          {/* Search */}
+       
       <section className="search-section">
         <div className="search-intro">
           <h2>Find the right conversation</h2>
@@ -239,7 +239,7 @@ export default function SearchPage() {
         {ingestMessage && <div className="ingest-toast">{ingestMessage}</div>}
       </section>
 
-      {/* Quick Topics */}
+   
       <section className="quick-topics">
         <div className="section-label">Quick Access</div>
         <div className="topics-grid">
@@ -279,7 +279,7 @@ export default function SearchPage() {
         </div>
       </section>
 
-      {/* Search Results */}
+   
       <section className="results-section">
         <div className="results-header">
           <div className="section-label">
@@ -304,7 +304,6 @@ export default function SearchPage() {
           </div>
         )}
 
-        {/* No Results Empty State */}
         {status === 'succeeded' && response && results.length === 0 && (
           <div className="no-results-card">
             <div className="no-results-icon">
@@ -324,7 +323,7 @@ export default function SearchPage() {
           </div>
         )}
 
-        {/* Display up to visibleCount chats */}
+
         {status === 'succeeded' && response && displayedResults.length > 0 &&
           displayedResults.map((item, idx) => {
             const focal = item.matchedMessage;
@@ -387,7 +386,7 @@ export default function SearchPage() {
           })
         }
 
-        {/* View More Chats Button */}
+       
         {hasMoreToView && (
           <div className="view-more-container">
             <button
@@ -401,7 +400,6 @@ export default function SearchPage() {
           </div>
         )}
 
-        {/* All shown notice */}
         {!hasMoreToView && results.length > 3 && (
           <div className="all-shown-badge">
             ✓ All {results.length} relevant chats displayed

@@ -12,23 +12,22 @@ const leaderboardRoute = require('./routes/leaderboard');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
 app.use(cors({
-  origin: '*', // Allows frontend on any local port (5173, 3000, etc.)
+  origin: '*',
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
 app.use(morgan('dev'));
 
-// Routes
+
 app.use('/api/ingest', ingestRoute);
 app.use('/api/search', searchRoute);
 app.use('/api/memories', memoriesRoute);
 app.use('/api/leaderboard', leaderboardRoute);
 app.use('/api', statusRoute);
 
-// Root healthcheck
+
 app.get('/', (req, res) => {
   res.json({
     name: 'searchChat API',
@@ -45,7 +44,7 @@ app.get('/', (req, res) => {
   });
 });
 
-// Error handling middleware
+
 app.use((err, req, res, next) => {
   console.error('[Unhandled Error]:', err);
   res.status(500).json({ error: 'Internal server error', details: err.message });

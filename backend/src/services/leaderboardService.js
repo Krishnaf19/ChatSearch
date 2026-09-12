@@ -55,9 +55,7 @@ const TOPIC_METADATA = {
   }
 };
 
-/**
- * Reads processed messages
- */
+
 function loadMessages() {
   if (!fs.existsSync(PROCESSED_PATH)) return [];
   try {
@@ -68,9 +66,7 @@ function loadMessages() {
   }
 }
 
-/**
- * Computes most active topics and member leaderboards
- */
+
 function getTopicsLeaderboard() {
   const messages = loadMessages();
   if (!messages.length) {
@@ -96,7 +92,6 @@ function getTopicsLeaderboard() {
     const sender = msg.sender || 'Anonymous';
     const emotion = msg.emotion || 'neutral';
 
-    // 1. Topic aggregates
     topicCounts[rawTopic] = (topicCounts[rawTopic] || 0) + 1;
 
     if (!topicSenders[rawTopic]) topicSenders[rawTopic] = {};
@@ -116,7 +111,7 @@ function getTopicsLeaderboard() {
       });
     }
 
-    // 2. Member aggregates
+
     memberCounts[sender] = (memberCounts[sender] || 0) + 1;
 
     if (!memberTopics[sender]) memberTopics[sender] = {};
@@ -128,7 +123,6 @@ function getTopicsLeaderboard() {
 
   const totalMessages = messages.length;
 
-  // Build Topics Leaderboard
   const topicsLeaderboard = Object.keys(topicCounts)
     .map((topicKey) => {
       const count = topicCounts[topicKey];
@@ -140,7 +134,7 @@ function getTopicsLeaderboard() {
         bgColor: '#eef2ff'
       };
 
-      // Top contributors for this topic
+  
       const sendersMap = topicSenders[topicKey] || {};
       const topContributors = Object.keys(sendersMap)
         .map((s) => ({
@@ -150,7 +144,7 @@ function getTopicsLeaderboard() {
         }))
         .sort((a, b) => b.count - a.count);
 
-      // Emotion breakdown
+     
       const emotionsMap = topicEmotions[topicKey] || {};
       const dominantEmotions = Object.keys(emotionsMap)
         .map((e) => ({
@@ -180,19 +174,16 @@ function getTopicsLeaderboard() {
       rank: index + 1
     }));
 
-  // Build Members Leaderboard
   const membersLeaderboard = Object.keys(memberCounts)
     .map((sender) => {
       const count = memberCounts[sender];
       const percentage = Math.round((count / totalMessages) * 100);
 
-      // Find top topic for this user
       const userTopics = memberTopics[sender] || {};
       const topTopicEntry = Object.entries(userTopics).sort((a, b) => b[1] - a[1])[0];
       const topTopic = topTopicEntry ? topTopicEntry[0] : 'chat';
       const topTopicLabel = TOPIC_METADATA[topTopic]?.label || topTopic;
 
-      // Find dominant emotion
       const userEmotions = memberEmotions[sender] || {};
       const dominantEmotionEntry = Object.entries(userEmotions).sort((a, b) => b[1] - a[1])[0];
       const dominantEmotion = dominantEmotionEntry ? dominantEmotionEntry[0] : 'neutral';

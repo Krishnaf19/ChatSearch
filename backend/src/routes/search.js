@@ -2,11 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { searchChat } = require('../services/searchEngine');
 
-/**
- * POST /api/search
- * Body: { query: string }
- * Runs Two-Tier search and returns matches with context windows.
- */
+
 router.post('/', async (req, res) => {
   try {
     const { query, page, limit } = req.body;

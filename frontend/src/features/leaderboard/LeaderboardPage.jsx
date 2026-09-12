@@ -94,7 +94,6 @@ export default function LeaderboardPage() {
 
   return (
     <div className="leaderboard-container">
-      {/* Header Banner */}
       <div className="leaderboard-header">
         <div className="leaderboard-badge">
           <Flame size={14} />
@@ -107,7 +106,7 @@ export default function LeaderboardPage() {
         </p>
       </div>
 
-      {/* Metric Highlights */}
+  
       <div className="leaderboard-stat-cards">
         <div className="stat-card">
           <div className="stat-icon" style={{ background: '#dcfce7', color: '#15803d' }}>
@@ -150,7 +149,7 @@ export default function LeaderboardPage() {
         </div>
       ) : (
         <>
-          {/* Topic Rankings Section */}
+        
           <div className="leaderboard-section">
             <div className="section-title-row">
               <h3>🏆 Ranked Subjects</h3>
@@ -166,7 +165,7 @@ export default function LeaderboardPage() {
 
                 return (
                   <div key={t.topic} className={`topic-rank-card ${rankInfo.class}`}>
-                    {/* Card Top */}
+                
                     <div className="card-top-header">
                       <div className="topic-title-group">
                         <div className="topic-icon-badge" style={{ backgroundColor: t.bgColor, color: t.color }}>
@@ -180,7 +179,7 @@ export default function LeaderboardPage() {
                       <span className={`rank-pill ${rankInfo.class}`}>{rankInfo.label}</span>
                     </div>
 
-                    {/* Progress Bar for Topic Volume */}
+       
                     <div className="topic-volume-meter">
                       <div className="volume-label-row">
                         <span className="volume-count">{t.messageCount} messages</span>
@@ -194,7 +193,7 @@ export default function LeaderboardPage() {
                       </div>
                     </div>
 
-                    {/* Contributors & Dominant Emotion Breakdown */}
+               
                     <div className="topic-breakdown-row">
                       {primarySpeaker && sm && (
                         <div className="top-contributor-box">
@@ -222,7 +221,7 @@ export default function LeaderboardPage() {
                       )}
                     </div>
 
-                    {/* All Contributors Row */}
+                
                     {t.topContributors && t.topContributors.length > 1 && (
                       <div className="all-contributors-row">
                         <span className="sub-label">Participants:</span>
@@ -245,7 +244,7 @@ export default function LeaderboardPage() {
                       </div>
                     )}
 
-                    {/* Sample Message Snippet */}
+                 
                     {t.samples && t.samples[0] && (
                       <div className="topic-sample-quote">
                         <span className="quote-author">{t.samples[0].sender}:</span>
@@ -253,7 +252,7 @@ export default function LeaderboardPage() {
                       </div>
                     )}
 
-                    {/* Action button */}
+                
                     <div className="topic-card-footer">
                       <button
                         type="button"
@@ -270,7 +269,7 @@ export default function LeaderboardPage() {
             </div>
           </div>
 
-          {/* Member Participation Breakdown */}
+
           <div className="leaderboard-section">
             <div className="section-title-row">
               <h3>👥 Member Contribution Matrix</h3>

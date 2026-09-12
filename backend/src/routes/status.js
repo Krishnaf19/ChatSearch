@@ -7,10 +7,7 @@ const PROCESSED_PATH = path.join(__dirname, '../../data/processed/messages.json'
 const EMBEDDINGS_PATH = path.join(__dirname, '../../data/embeddings/message_embeddings.json');
 const RAW_PATH = path.join(__dirname, '../../data/raw/chat_export.json');
 
-/**
- * GET /api/status
- * Returns system state, counts, and available senders
- */
+
 router.get('/status', (req, res) => {
   const isRawAvailable = fs.existsSync(RAW_PATH);
   const isProcessedAvailable = fs.existsSync(PROCESSED_PATH);
@@ -45,10 +42,6 @@ router.get('/status', (req, res) => {
   });
 });
 
-/**
- * GET /api/messages
- * Returns all processed messages
- */
 router.get('/messages', (req, res) => {
   if (!fs.existsSync(PROCESSED_PATH)) {
     return res.status(404).json({ error: 'No processed messages found' });

@@ -79,7 +79,6 @@ export default function MemoriesPage() {
 
   return (
     <div className="memories-container">
-      {/* Intro Header */}
       <div className="memories-header">
         <div className="memories-badge">
           <Sparkles size={14} />
@@ -92,7 +91,7 @@ export default function MemoriesPage() {
         </p>
       </div>
 
-      {/* Date & Filter Navigation Bar */}
+
       <div className="memories-filter-bar">
         <div className="filter-chips">
           <button
@@ -125,7 +124,7 @@ export default function MemoriesPage() {
         </div>
       </div>
 
-      {/* Content Area */}
+
       {memoriesLoading ? (
         <div className="loading-indicator">
           <Clock size={20} className="spinning" />
@@ -153,7 +152,6 @@ export default function MemoriesPage() {
 
             return (
               <div key={item.id || idx} className="memory-card">
-                {/* Memory Top Ribbon */}
                 <div className="memory-ribbon">
                   <div className="memory-meta-left">
                     <span className="memory-category-tag">
@@ -168,7 +166,7 @@ export default function MemoriesPage() {
                   </div>
                 </div>
 
-                {/* Milestone Title & Summary */}
+
                 {item.title && (
                   <div className="memory-headline">
                     <h3>{item.title}</h3>
@@ -176,7 +174,7 @@ export default function MemoriesPage() {
                   </div>
                 )}
 
-                {/* Focal Quote Card */}
+
                 <div className="memory-focal-box">
                   <div className="memory-sender-row">
                     <div className="sender-avatar" style={{ backgroundColor: sm.bg, color: sm.color }}>
@@ -233,7 +231,7 @@ export default function MemoriesPage() {
                   </div>
                 </div>
 
-                {/* Surrounding Context Thread */}
+
                 {isExpanded && item.contextWindow && item.contextWindow.length > 0 && (
                   <div className="memory-thread-context">
                     <div className="thread-title">

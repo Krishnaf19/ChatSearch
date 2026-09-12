@@ -1,7 +1,3 @@
-/**
- * Computes cosine similarity between two numeric vectors.
- * Returns a value between -1.0 and 1.0 (or 0.0 if either vector is zero-magnitude).
- */
 function cosineSimilarity(vecA, vecB) {
   if (!vecA || !vecB || vecA.length !== vecB.length || vecA.length === 0) return 0;
   

@@ -1,8 +1,4 @@
-/**
- * Message Tagging Service
- * Extracts emotion and topic for English and Hinglish messages.
- * Supports LLM-based tagging if an API key is available, with a fast, deterministic rule-based fallback.
- */
+
 
 const https = require('https');
 
@@ -96,9 +92,7 @@ const TOPIC_PATTERNS = [
   }
 ];
 
-/**
- * Deterministic rule-based tagger
- */
+
 function ruleBasedTag(text) {
   let matchedEmotion = 'neutral';
   let matchedTopic = 'chat';
@@ -120,9 +114,7 @@ function ruleBasedTag(text) {
   return { emotion: matchedEmotion, topic: matchedTopic };
 }
 
-/**
- * LLM-based tagger using Anthropic Claude API (if ANTHROPIC_API_KEY is available)
- */
+
 async function claudeTag(text, apiKey) {
   return new Promise((resolve, reject) => {
     const prompt = `Classify this single chat message (may be English or Hinglish) into JSON format with keys "emotion" and "topic".
@@ -176,9 +168,7 @@ Message: "${text.replace(/"/g, '\\"')}"`;
   });
 }
 
-/**
- * Master tagMessage function
- */
+
 async function tagMessage(text) {
   if (process.env.ANTHROPIC_API_KEY) {
     try {
@@ -191,7 +181,7 @@ async function tagMessage(text) {
     }
   }
 
-  // Fallback to high-precision rule tagger
+
   return ruleBasedTag(text);
 }
 

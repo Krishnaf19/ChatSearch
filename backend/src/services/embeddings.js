@@ -1,17 +1,10 @@
 const https = require('https');
 
-/**
- * Universal Embedding Service
- * Supports Voyage AI, OpenAI, Gemini, and a built-in deterministic semantic vectorizer fallback.
- * Includes English and Hinglish conversational semantics.
- */
 
-// Dimension size for local semantic vectors
 const VECTOR_DIM = 64;
 
-// Semantic concept anchors mapped to specific vector dimensions
 const CONCEPT_CLUSTERS = [
-  // Adventure / thrill / outdoor sports / adrenaline (English + Hinglish)
+ 
   {
     name: 'adventure',
     dims: [0, 1, 2, 3],
@@ -22,7 +15,7 @@ const CONCEPT_CLUSTERS = [
       'rishikesh', 'nasha', 'pagal', 'glacier', 'glacial', 'meltwater', 'whirlpool', 'whirlpools', 'outdoor'
     ]
   },
-  // Sadness / grief / burnout / layoff / struggle / emotional venting (English + Hinglish)
+  
   {
     name: 'sadness',
     dims: [4, 5, 6, 7],
@@ -37,7 +30,7 @@ const CONCEPT_CLUSTERS = [
       'heart to heart', 'heart-to-heart', 'so sad', 'very sad', 'bad day'
     ]
   },
-  // Travel / vacation / getaway / holiday planning / accommodation
+  
   {
     name: 'travel',
     dims: [8, 9, 10, 11],
@@ -47,7 +40,7 @@ const CONCEPT_CLUSTERS = [
       'jackets', 'swiped', 'chutti', 'dussehra', 'solang', 'chalenge', 'valley', 'holiday', 'orchard'
     ]
   },
-  // Joy / celebration / enthusiasm
+  
   {
     name: 'joy',
     dims: [12, 13, 14, 15],
@@ -57,7 +50,7 @@ const CONCEPT_CLUSTERS = [
       'loving', 'love', 'fun', 'funny', 'comedy', 'cheerful', 'positive', 'laughing', 'laughter'
     ]
   },
-  // Work / office / corporate
+ 
   {
     name: 'work',
     dims: [16, 17, 18, 19],
@@ -67,7 +60,7 @@ const CONCEPT_CLUSTERS = [
       'stress', 'work stress', 'pressure', 'late night project', 'exhaustion'
     ]
   },
-  // Food / dining / midnight treats (English + Hinglish)
+ 
   {
     name: 'food',
     dims: [20, 21, 22, 23],
@@ -77,7 +70,7 @@ const CONCEPT_CLUSTERS = [
       'tea', 'khana', 'kulhad'
     ]
   },
-  // Sports / entertainment
+ 
   {
     name: 'sports',
     dims: [24, 25, 26, 27],
@@ -86,7 +79,7 @@ const CONCEPT_CLUSTERS = [
       'cricket', 'match', 'sixer', 'six', 'runs', 'balls', 'wickets', 'thriller', 'last over'
     ]
   },
-  // Gratitude / friendship / support
+  
   {
     name: 'support',
     dims: [28, 29, 30, 31],
@@ -98,7 +91,7 @@ const CONCEPT_CLUSTERS = [
   }
 ];
 
-// Emoji mappings to concepts for edge-case query handling
+
 const EMOJI_MAP = {
   '🏔️': 'mountain adventure',
   '🏔': 'mountain adventure',
@@ -152,16 +145,12 @@ function escapeRegex(s) {
   return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 }
 
-/**
- * Built-in deterministic semantic vector generator
- * Produces dense vector representations capturing semantic meaning, concepts, and lexical tokens.
- * Uses exact word-boundary matching to prevent false positives from substring collisions.
- */
+
 function localEmbed(text) {
   const vec = new Array(VECTOR_DIM).fill(0);
   if (!text || typeof text !== 'string') return vec;
 
-  // Expand emojis into semantic concept words
+ 
   let expanded = text;
   for (const [emoji, meaning] of Object.entries(EMOJI_MAP)) {
     if (expanded.includes(emoji)) {
@@ -173,7 +162,7 @@ function localEmbed(text) {
   const tokens = normalized.replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(Boolean);
   const tokenSet = new Set(tokens);
 
-  // 1. Concept cluster activations with whole word boundaries
+  
   for (const cluster of CONCEPT_CLUSTERS) {
     let hits = 0;
     for (const kw of cluster.keywords) {
@@ -192,7 +181,6 @@ function localEmbed(text) {
     }
   }
 
-  // 2. Lexical word overlap via signed hashing on meaningful content tokens
   for (const token of tokens) {
     if (STOP_WORDS_SET.has(token) || token.length < 3) continue;
     let hash = 0;
@@ -204,7 +192,6 @@ function localEmbed(text) {
     vec[targetDim] += sign * 0.4;
   }
 
-  // Normalize vector to unit length (L2 norm)
   let sumSq = 0;
   for (let i = 0; i < VECTOR_DIM; i++) {
     sumSq += vec[i] * vec[i];
@@ -219,9 +206,7 @@ function localEmbed(text) {
   return vec;
 }
 
-/**
- * Voyage AI Embedding API call
- */
+
 async function voyageEmbed(text, apiKey) {
   return new Promise((resolve, reject) => {
     const postData = JSON.stringify({
@@ -264,9 +249,7 @@ async function voyageEmbed(text, apiKey) {
   });
 }
 
-/**
- * OpenAI Embedding API call
- */
+
 async function openAiEmbed(text, apiKey) {
   return new Promise((resolve, reject) => {
     const postData = JSON.stringify({
@@ -309,11 +292,7 @@ async function openAiEmbed(text, apiKey) {
   });
 }
 
-/**
- * Returns true if the current configuration uses the local deterministic vectorizer
- * (i.e., no external API key is configured). Used by the search engine to pick
- * appropriate similarity thresholds.
- */
+
 function isLocalProvider() {
   const provider = (process.env.EMBEDDING_PROVIDER || '').toLowerCase();
   if (provider === 'voyage' && process.env.VOYAGE_API_KEY) return false;
@@ -321,9 +300,7 @@ function isLocalProvider() {
   return true;
 }
 
-/**
- * Master embedText function
- */
+
 async function embedText(text) {
   const provider = (process.env.EMBEDDING_PROVIDER || '').toLowerCase();
   

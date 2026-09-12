@@ -2,11 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { getMemories } = require('../services/memoriesService');
 
-/**
- * GET /api/memories
- * Query params: ?date=YYYY-MM-DD
- * Returns On This Day memories, curated milestones/highlights, and active calendar dates.
- */
+
 router.get('/', (req, res) => {
   try {
     const { date } = req.query;
