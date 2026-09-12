@@ -200,7 +200,7 @@ async function searchChat(query) {
     return {
       query,
       tierUsed: 'keyword',
-      badge: '🔍 Keyword Match',
+      badge: 'Keyword Match',
       personFilter: person,
       keywords,
       results

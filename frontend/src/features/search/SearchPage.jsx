@@ -9,7 +9,6 @@ import {
   clearSearch
 } from './searchSlice';
 import {
-  Search,
   Sparkles,
   Zap,
   RefreshCw,
@@ -18,7 +17,8 @@ import {
   CalendarCheck,
   Compass,
   HeartCrack,
-  Coffee
+  Coffee,
+  BriefcaseBusiness
 } from 'lucide-react';
 
 const QUICK_TOPICS = [
@@ -61,6 +61,16 @@ const QUICK_TOPICS = [
     tag: 'Food',
     members: ['Rohan', 'Kabir', 'Ananya', 'Rahul'],
     icon: Coffee
+  },
+  {
+    id: 'work-stress',
+    title: 'Work Stress Talk',
+    subtitle: 'Late-night project pressure and burnout',
+    query: 'rahul or rohan ke sath work stress discussion',
+    tier: 'Semantic',
+    tag: 'Work',
+    members: ['Rahul', 'Rohan', 'Kabir'],
+    icon: BriefcaseBusiness
   }
 ];
 
@@ -142,7 +152,7 @@ export default function SearchPage() {
         </div>
 
         <div className="header-actions">
-          <span className="sync-badge">40 messages synced</span>
+          <span className="sync-badge">📦 5,000 chats synced</span>
           <button
             className="reindex-btn"
             onClick={() => dispatch(runIngest())}
@@ -166,10 +176,10 @@ export default function SearchPage() {
         </div>
 
         <form className="search-bar" onSubmit={handleSearchSubmit}>
-          <Search size={18} className="icon" />
+
           <input
             type="text"
-            placeholder="Search conversations\u2026"
+            placeholder="Search by topic, emotion, person, or memory…"
             value={query}
             onChange={(e) => dispatch(setQuery(e.target.value))}
           />
@@ -235,18 +245,12 @@ export default function SearchPage() {
               : 'Results'}
           </div>
 
-          {response && (
-            <span className={`tier-badge ${response.tierUsed === 'keyword' ? 'keyword' : 'semantic'}`}>
-              {response.tierUsed === 'keyword' ? <Zap size={12} /> : <Sparkles size={12} />}
-              {response.badge}
-            </span>
-          )}
         </div>
 
         {status === 'loading' && (
           <div className="loading-indicator">
             <RefreshCw size={18} className="spinning" />
-            Searching\u2026
+            Searching - Find right conversation
           </div>
         )}
 
@@ -264,6 +268,7 @@ export default function SearchPage() {
                         {sm.initials}
                       </span>
                       <div className="sender-info">
+                        <span className="user-tag">Chat by</span>
                         <span className="name">{focal.sender}</span>
                         <span className="time">{formatTimestamp(focal.timestamp)}</span>
                       </div>

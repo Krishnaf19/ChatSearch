@@ -72,7 +72,7 @@ const DEFAULT_SEARCH_HISTORY = [
   {
     query: 'manali trip kab decide hua',
     tierUsed: 'keyword',
-    badge: '🔍 Keyword Match',
+    badge: 'Keyword Match',
     personFilter: null,
     resultsCount: 2,
     durationMs: 4,
@@ -81,7 +81,7 @@ const DEFAULT_SEARCH_HISTORY = [
   {
     query: 'rahul ke sath sad baatein',
     tierUsed: 'keyword',
-    badge: '🔍 Keyword Match',
+    badge: 'Keyword Match',
     personFilter: 'Rahul',
     resultsCount: 3,
     durationMs: 3,
@@ -90,7 +90,7 @@ const DEFAULT_SEARCH_HISTORY = [
   {
     query: 'rahul ke sath adventurous baatein',
     tierUsed: 'semantic',
-    badge: '🎯 Tone / Semantic Match',
+    badge: 'Semantic Match',
     personFilter: 'Rahul',
     resultsCount: 3,
     durationMs: 8,
