@@ -1,214 +1,183 @@
-# 💬 searchChat
+# searchChat
 
-> **Intelligent Two-Tier Search, Historical "On This Day" Highlights & Topic Analytics for Group Chats.**
+SearchChat is a local-first group chat search dashboard. It helps people find decisions, plans, emotional moments, and recurring topics across a conversation history.
 
-`searchChat` is an end-to-end conversation intelligence platform designed to make group chat histories searchable, memorable, and insightful. It bridges the gap between literal keyword search and human memory by combining exact text matching, emotion and topic tagging, semantic embedding similarity, nostalgic milestone throwbacks, and interactive topic leaderboards.
+The project includes a React frontend, an Express API, and a small JSON-based search index. The included chat export is demo data so the project can run after a fresh clone.
 
----
+## What It Does
 
-## 🌟 Key Highlights & Capabilities
+- Searches message text, topics, emotions, and sender names.
+- Falls back to semantic similarity when keyword search is not enough.
+- Returns the matching message with surrounding conversation context.
+- Shows memories, active topics, and member contributions.
+- Re-indexes a raw chat export through the UI or API.
 
-### 🔍 1. Two-Tier Retrieval Engine
-- **Tier 1 (High-Precision Keyword & Tag Match)**: Matches queries directly against message text, participant names, and pre-extracted emotional/topic tags (e.g., `"when did we decide on Manali"`, `"my sad talk with rahul"`).
-- **Tier 2 (Semantic & Tone Similarity Fallback)**: Automatically activates when literal keywords are insufficient, leveraging cosine similarity across high-dimensional semantic embeddings to retrieve tone, vibe, and conceptual matches (e.g., `"my adventurous talks with rahul"`).
-- **Context Window Expansion**: Returns the focal matching message alongside surrounding conversation threads (2 messages before and after) so users always have the complete conversational context.
+## Architecture
 
-### 📅 2. Group Highlights & "On This Day" Memories
-- **Nostalgic Flashbacks**: Resurface conversations and decisions that happened exactly a year ago, 6 months ago, or on matching calendar dates.
-- **Curated Group Milestones**: Auto-identifies landmark moments like trip agreements, emotional support brotherhood threads, thrilling adventure jumps, and spontaneous late-night food runs.
-- **Interactive Calendar Filter**: Browse historical milestones by date or explore the all-time group highlight reel with expandable full-thread previews.
-
-### 🏆 3. Most Active Topics Leaderboard
-- **Subject Categorization**: Tracks and ranks the top subjects discussed across the chat history—including **Adventure**, **Travel & Trips**, **Work-Venting & Support**, **Food & Late-Night Drives**, and **Sports**.
-- **Topic Analytics**: Displays message volume, percentage share of total group conversations, and dominant emotional vibe per topic.
-- **Speaker Contribution Matrix**: Highlights who dominates each topic (e.g., Top Contributor: Rahul for Adventure, Rohan for Travel) and breaks down each member's personal conversation profile.
-- **Click-to-Explore**: Seamlessly jump from any topic or member profile straight into filtered search results.
-
----
-
-## 🏗️ Architecture & Pipeline
-
-```
-┌────────────────────────────────────────────────────────────────────────┐
-│                        searchChat Architecture                         │
-└────────────────────────────────────────────────────────────────────────┘
-                                    │
-           ┌────────────────────────┴────────────────────────┐
-           ▼                                                 ▼
-   ┌───────────────┐                                 ┌───────────────┐
-   │  Raw Chats    │ (JSON Export)                   │ User Query    │
-   └───────┬───────┘                                 └───────┬───────┘
-           │                                                 │
-           ▼ (Ingestion Pipeline)                            ▼
-   ┌────────────────────────────────┐                ┌───────────────┐
-   │ • Emotion & Topic Tagger       │                │ Two-Tier      │
-   │ • Embedding Vector Generator   │                │ Search Router │
-   │ • Flat-file Storage Persistence│                └───────┬───────┘
-   └───────┬────────────────────────┘                        │
-           │                                      ┌──────────┴──────────┐
-           ▼                                      ▼                     ▼
-┌───────────────────────┐                  ┌─────────────┐       ┌─────────────┐
-│ Processed Index Store │                  │ Tier 1:     │       │ Tier 2:     │
-│ • messages.json       │ ───────────────► │ Keyword &   │       │ Semantic &  │
-│ • embeddings.json     │                  │ Tag Match   │       │ Cosine Sim  │
-└───────────────────────┘                  └─────────────┘       └─────────────┘
-           │                                      │                     │
-           │                                      └──────────┬──────────┘
-           │                                                 ▼
-           │                                    ┌────────────────────────┐
-           │                                    │ Context Thread Builder │
-           │                                    │ (±2 Window Expansion)  │
-           │                                    └────────────┬───────────┘
-           │                                                 │
-           ▼                                                 ▼
-┌────────────────────────────────────────────────────────────────────────┐
-│                 React + Redux Toolkit Modern Frontend                  │
-│   • Search Explorer  • "On This Day" Memories  • Topics Leaderboard    │
-└────────────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart LR
+    A[React + Redux frontend] -->|HTTP| B[Express API]
+    B --> C[Search engine]
+    B --> D[Memories service]
+    B --> E[Leaderboard service]
+    C --> F[(Processed messages JSON)]
+    C --> G[(Embeddings JSON)]
+    D --> F
+    E --> F
+    H[Raw chat export JSON] --> I[Ingestion route]
+    I --> J[Tagger]
+    I --> K[Embedding provider]
+    J --> F
+    K --> G
 ```
 
----
+### Main components
 
-## 🛠️ Technology Stack
+| Component | Responsibility |
+| --- | --- |
+| `frontend/` | React dashboard, search controls, results, memories, and leaderboard views |
+| `backend/src/server.js` | Starts Express and registers the API routes |
+| `backend/src/routes/` | HTTP endpoints for search, ingestion, status, memories, and leaderboard data |
+| `backend/src/services/searchEngine.js` | Keyword matching, semantic fallback, ranking, and context expansion |
+| `backend/src/services/tagger.js` | Assigns emotion and topic labels to each message |
+| `backend/src/services/embeddings.js` | Creates local or external embedding vectors |
+| `backend/src/services/memoriesService.js` | Builds date-based memories and highlights |
+| `backend/src/services/leaderboardService.js` | Aggregates topic and member activity |
+| `backend/data/` | Raw export, processed messages, and persisted embedding vectors |
 
-| Layer | Technologies |
-| :--- | :--- |
-| **Frontend** | React 18, Vite, Redux Toolkit, Axios, Lucide React, Modern CSS3 |
-| **Backend** | Node.js, Express, Morgan, Dotenv, CORS |
-| **Data & Storage** | JSON-based storage (`chat_export.json`, `messages.json`, `message_embeddings.json`) |
-| **NLP & Search** | Two-tier heuristic tagger, TF-IDF / Substring matching, Vector Cosine Similarity |
+## Search Pipeline
 
----
+### 1. Ingestion and indexing
 
-## 📁 Repository Structure
-
-```bash
-searchChat/
-├── backend/
-│   ├── data/
-│   │   ├── raw/
-│   │   │   └── chat_export.json           # Raw source chat exports
-│   │   ├── processed/
-│   │   │   └── messages.json              # Tagged and normalized messages
-│   │   └── embeddings/
-│   │       └── message_embeddings.json    # Vector embeddings map
-│   ├── src/
-│   │   ├── routes/
-│   │   │   ├── ingest.js                  # Ingestion & re-indexing route
-│   │   │   ├── search.js                  # Two-tier search route
-│   │   │   ├── memories.js                # "On This Day" & highlights route
-│   │   │   ├── leaderboard.js             # Most active topics leaderboard route
-│   │   │   └── status.js                  # System health & metadata route
-│   │   ├── services/
-│   │   │   ├── embeddings.js              # Vector embedding provider
-│   │   │   ├── searchEngine.js            # Two-tier query matching logic
-│   │   │   ├── tagger.js                  # Rule-based & LLM emotion/topic tagger
-│   │   │   ├── memoriesService.js         # Memory calculation & milestone extractor
-│   │   │   └── leaderboardService.js      # Topic & member aggregation analytics
-│   │   ├── utils/
-│   │   │   └── similarity.js              # Cosine similarity vector utility
-│   │   └── server.js                      # Express API server entry point
-│   ├── test-demo.js                       # End-to-end demo test suite
-│   └── package.json
-├── frontend/
-│   ├── src/
-│   │   ├── features/
-│   │   │   ├── search/                    # Search dashboard, query bar & results
-│   │   │   │   ├── SearchPage.jsx
-│   │   │   │   └── searchSlice.js
-│   │   │   ├── memories/                  # "On This Day" & highlight cards
-│   │   │   │   └── MemoriesPage.jsx
-│   │   │   └── leaderboard/               # Ranked subjects & member analytics
-│   │   │       └── LeaderboardPage.jsx
-│   │   ├── App.css                        # Design system & responsive styles
-│   │   ├── App.jsx                        # Root React layout
-│   │   ├── main.jsx                       # React DOM entry
-│   │   └── store.js                       # Redux store configuration
-│   ├── index.html
-│   ├── vite.config.js
-│   └── package.json
-├── package.json                           # Root monorepo script runner
-└── README.md
+```mermaid
+flowchart TD
+    A[chat_export.json] --> B[POST /api/ingest]
+    B --> C[Read each message]
+    C --> D[Extract topic and emotion]
+    C --> E[Create embedding vector]
+    D --> F[messages.json]
+    E --> G[message_embeddings.json]
 ```
 
----
+The ingestion route reads the raw export, tags each message, creates an embedding, and writes two local index files. The default tagger is deterministic and does not require an API key.
 
-## 🚀 Getting Started
+### 2. Query and retrieval
 
-### Prerequisites
-- **Node.js**: v18.0.0 or later
-- **npm**: v9.0.0 or later
+```mermaid
+flowchart TD
+    A[User query] --> B[Extract sender and keywords]
+    B --> C{Keyword or tag matches?}
+    C -->|Yes| D[Tier 1: keyword search]
+    C -->|No| E[Tier 2: embedding similarity]
+    D --> F[Rank matches]
+    E --> F
+    F --> G[Expand context around each match]
+    G --> H[Return results to frontend]
+```
 
-### 1. Installation
-Install all dependencies across both frontend and backend in one command:
+Tier 1 checks message text, topic labels, emotion labels, and sender filters. Tier 2 compares the query embedding with stored message vectors using cosine similarity. Each result includes a context window around the matched message.
+
+## Data Model
+
+The repository contains a small demo dataset:
+
+- `backend/data/raw/chat_export.json`: raw source messages.
+- `backend/data/processed/messages.json`: normalized messages with `sender`, `text`, `timestamp`, `topic`, and `emotion`.
+- `backend/data/embeddings/message_embeddings.json`: persisted vectors used by semantic search.
+
+These files are mocked/demo data. The application flow is real and can be pointed at another export with the same message shape.
+
+## Run Locally
+
+### Requirements
+
+- Node.js 18 or newer
+- npm 9 or newer
+
+### Install
+
+From the repository root:
 
 ```bash
 npm run install:all
 ```
 
-### 2. Launch Development Servers
+### Start the application
 
-#### Option A: Run Backend & Frontend Separately
+Use two terminals from the repository root:
+
 ```bash
-# Terminal 1: Start Backend API (Port 5000)
+# Terminal 1
 npm run dev:backend
+```
 
-# Terminal 2: Start Frontend UI (Port 5173)
+```bash
+# Terminal 2
 npm run dev:frontend
 ```
 
-#### Option B: Run Monorepo Dev Command
+Open `http://localhost:5173`. The API runs at `http://localhost:5000`.
+
+The Vite server may choose another port if `5173` is already in use. Use the URL printed in the terminal.
+
+## Verify the Project
+
+Build the frontend:
+
 ```bash
-npm run dev
+cd frontend
+npm run build
 ```
 
-- **Frontend Application**: [http://localhost:5173](http://localhost:5173)
-- **Backend API**: [http://localhost:5000](http://localhost:5000)
-
----
-
-## 🧪 Testing & Verification
-
-Run the automated end-to-end verification script to validate data ingestion and the three canonical search scenarios:
+Run the backend demo checks:
 
 ```bash
 npm run demo
 ```
 
-### Verified Benchmark Scenarios:
-1. **`"when did we decide on Manali"`** ➔ Evaluates **Tier 1 (Keyword Search)** and extracts decision dates.
-2. **`"my sad talk with rahul"`** ➔ Evaluates **Tier 1 (Person Filter + Emotion Tag)**.
-3. **`"my adventurous talks with rahul"`** ➔ Evaluates **Tier 2 (Semantic Tone Fallback)** via cosine similarity.
+The demo exercises representative keyword, person/emotion, and semantic searches against the included dataset.
 
----
+## API Overview
 
-## 📡 REST API Reference
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| `POST` | `/api/search` | Search messages with `{ "query": "..." }` |
+| `POST` | `/api/ingest` | Rebuild processed messages and embeddings |
+| `GET` | `/api/status` | Return index state, counts, senders, and topics |
+| `GET` | `/api/messages` | Return all processed messages |
+| `GET` | `/api/memories` | Return highlights, optionally filtered by date |
+| `GET` | `/api/leaderboard` | Return topic and member activity aggregates |
 
-| Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| `POST` | `/api/search` | Execute two-tier search with body `{ "query": "..." }` |
-| `GET` | `/api/memories` | Fetch "On This Day" memories and curated milestones (`?date=YYYY-MM-DD`) |
-| `GET` | `/api/leaderboard` | Fetch most active topics, member contributions, and emotion stats |
-| `POST` | `/api/ingest` | Trigger full chat re-ingestion, tagging, and embedding indexing |
-| `GET` | `/api/status` | Get system status, message counts, senders, and active provider |
-| `GET` | `/api/messages` | Retrieve all processed messages with tags |
+## Configuration
 
----
-
-## ⚙️ Configuration & Environment Variables
-
-Create a `.env` file in `backend/` if you want to customize embedding or tagging providers:
+Create `backend/.env` only when you need custom settings:
 
 ```env
 PORT=5000
 EMBEDDING_PROVIDER=local-semantic
-
-# Optional: Claude API key for enhanced zero-shot tagging (rule-based fallback used by default)
-# ANTHROPIC_API_KEY=your_anthropic_api_key_here
 ```
 
----
+The default local provider works without external services. The tagger can optionally use Anthropic when `ANTHROPIC_API_KEY` is configured; otherwise it uses the built-in rule-based fallback.
 
-## 📄 License
+## Project Structure
 
-This project is open source and available under the [ISC License](LICENSE).
+```text
+searchChat/
+├── backend/
+│   ├── data/
+│   ├── src/
+│   │   ├── routes/
+│   │   ├── services/
+│   │   ├── utils/
+│   │   └── server.js
+│   └── test-demo.js
+├── frontend/
+│   └── src/
+│       ├── features/
+│       │   ├── search/
+│       │   ├── memories/
+│       │   └── leaderboard/
+│       └── store.js
+├── package.json
+└── README.md
+```
