@@ -18,7 +18,9 @@ import {
   Compass,
   HeartCrack,
   Coffee,
-  BriefcaseBusiness
+  BriefcaseBusiness,
+  ChevronDown,
+  SearchX
 } from 'lucide-react';
 
 const QUICK_TOPICS = [
@@ -88,13 +90,12 @@ export default function SearchPage() {
     query,
     status,
     response,
-    allMessages,
     ingestStatus,
     ingestMessage
   } = useSelector((state) => state.search);
 
   const [activeCard, setActiveCard] = useState('manali');
-  const [selectedSender, setSelectedSender] = useState('all');
+  const [visibleCount, setVisibleCount] = useState(3);
 
   useEffect(() => {
     dispatch(fetchStatus());
@@ -105,11 +106,13 @@ export default function SearchPage() {
   const handleSearchSubmit = (e) => {
     if (e) e.preventDefault();
     if (!query.trim()) return;
+    setVisibleCount(3);
     dispatch(executeSearch(query.trim()));
   };
 
   const handleCardClick = (card) => {
     setActiveCard(card.id);
+    setVisibleCount(3);
     dispatch(setQuery(card.query));
     dispatch(executeSearch(card.query));
   };
@@ -117,6 +120,7 @@ export default function SearchPage() {
   const handleClear = () => {
     dispatch(clearSearch());
     setActiveCard(null);
+    setVisibleCount(3);
   };
 
   const getSenderMeta = (sender) =>
@@ -135,10 +139,9 @@ export default function SearchPage() {
     }
   };
 
-  const filteredMessages =
-    selectedSender === 'all'
-      ? allMessages
-      : allMessages.filter((m) => m.sender.toLowerCase() === selectedSender.toLowerCase());
+  const results = response?.results || [];
+  const displayedResults = results.slice(0, visibleCount);
+  const hasMoreToView = results.length > visibleCount;
 
   return (
     <div className="search-page">
@@ -239,12 +242,17 @@ export default function SearchPage() {
         <div className="results-header">
           <div className="section-label">
             {status === 'loading'
-              ? 'Searching\u2026'
-              : response && response.results.length > 0
-              ? `Results \u2014 ${response.results.length} found`
+              ? 'Searching…'
+              : response && results.length > 0
+              ? `Results — ${results.length} relevant ${results.length === 1 ? 'chat' : 'chats'} found (showing ${displayedResults.length})`
               : 'Results'}
           </div>
 
+          {response && response.badge && results.length > 0 && (
+            <div className={`tier-badge ${response.tierUsed || 'semantic'}`}>
+              {response.badge}
+            </div>
+          )}
         </div>
 
         {status === 'loading' && (
@@ -254,8 +262,29 @@ export default function SearchPage() {
           </div>
         )}
 
-        {status === 'succeeded' && response && response.results.length > 0 &&
-          response.results.map((item, idx) => {
+        {/* No Results Empty State */}
+        {status === 'succeeded' && response && results.length === 0 && (
+          <div className="no-results-card">
+            <div className="no-results-icon">
+              <SearchX size={32} />
+            </div>
+            <h3>No matching conversations found</h3>
+            <p>
+              {response.message || `No mentions or semantic matches found for "${response.query}".`}
+            </p>
+            <div className="no-results-suggestions">
+              <span>Try searching for:</span>
+              <button type="button" onClick={() => handleCardClick(QUICK_TOPICS[0])}>Manali trip</button>
+              <button type="button" onClick={() => handleCardClick(QUICK_TOPICS[1])}>Rahul sad talk</button>
+              <button type="button" onClick={() => handleCardClick(QUICK_TOPICS[2])}>Adventurous talks</button>
+              <button type="button" onClick={() => handleCardClick(QUICK_TOPICS[3])}>Murthal drive</button>
+            </div>
+          </div>
+        )}
+
+        {/* Display up to visibleCount chats */}
+        {status === 'succeeded' && response && displayedResults.length > 0 &&
+          displayedResults.map((item, idx) => {
             const focal = item.matchedMessage;
             const sm = getSenderMeta(focal.sender);
 
@@ -273,7 +302,7 @@ export default function SearchPage() {
                         <span className="time">{formatTimestamp(focal.timestamp)}</span>
                       </div>
                     </div>
-                    <span className="match-badge">Match</span>
+                    <span className="match-badge">Match #{idx + 1}</span>
                   </div>
 
                   <div className="focal-quote">&ldquo;{focal.text}&rdquo;</div>
@@ -286,7 +315,7 @@ export default function SearchPage() {
                 {item.contextWindow && item.contextWindow.length > 0 && (
                   <div className="context-thread">
                     <div className="context-label">
-                      Thread \u00b7 {item.contextWindow.length} messages
+                      Thread · {item.contextWindow.length} messages
                     </div>
                     <div className="context-messages">
                       {item.contextWindow.map((msg) => {
@@ -315,64 +344,27 @@ export default function SearchPage() {
             );
           })
         }
-      </section>
 
-      {/* All Messages */}
-      <section className="all-messages-section">
-        <div className="messages-header">
-          <div>
-            <div className="section-label">All Messages ({allMessages.length})</div>
-            <p>Browse or filter by sender</p>
-          </div>
-          <div className="filter-chips">
+        {/* View More Chats Button */}
+        {hasMoreToView && (
+          <div className="view-more-container">
             <button
-              className={`filter-chip${selectedSender === 'all' ? ' active' : ''}`}
-              onClick={() => setSelectedSender('all')}
+              type="button"
+              className="view-more-btn"
+              onClick={() => setVisibleCount((prev) => prev + 3)}
             >
-              All
+              <ChevronDown size={16} />
+              View More Chats ({results.length - visibleCount} remaining)
             </button>
-            {['Rohan', 'Rahul', 'Kabir', 'Priya', 'Ananya'].map((name) => (
-              <button
-                key={name}
-                className={`filter-chip${selectedSender.toLowerCase() === name.toLowerCase() ? ' active' : ''}`}
-                onClick={() => setSelectedSender(name)}
-              >
-                {name}
-              </button>
-            ))}
           </div>
-        </div>
+        )}
 
-        <div className="message-list">
-          {filteredMessages.map((msg) => {
-            const meta = getSenderMeta(msg.sender);
-            return (
-              <div key={msg.id} className="message-row">
-                <span className="avatar" style={{ backgroundColor: meta.bg, color: meta.color }}>
-                  {meta.initials}
-                </span>
-                <div className="message-content">
-                  <span className="sender-name">{msg.sender}</span>
-                  <p className="text-preview">{msg.text}</p>
-                </div>
-                <div className="message-meta">
-                  <span className="meta-tag">{msg.topic || 'Chat'}</span>
-                  <span className="meta-time">{formatTimestamp(msg.timestamp)}</span>
-                </div>
-                <button
-                  className="open-btn"
-                  onClick={() => {
-                    dispatch(setQuery(msg.text.slice(0, 30)));
-                    dispatch(executeSearch(msg.text.slice(0, 30)));
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                >
-                  Search
-                </button>
-              </div>
-            );
-          })}
-        </div>
+        {/* All shown notice */}
+        {!hasMoreToView && results.length > 3 && (
+          <div className="all-shown-badge">
+            ✓ All {results.length} relevant chats displayed
+          </div>
+        )}
       </section>
     </div>
   );

@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const { cosineSimilarity } = require('../utils/similarity');
-const { embedText } = require('./embeddings');
+const { embedText, isLocalProvider } = require('./embeddings');
 
 const PROCESSED_DATA_PATH = path.join(__dirname, '../../data/processed/messages.json');
 const EMBEDDINGS_DATA_PATH = path.join(__dirname, '../../data/embeddings/message_embeddings.json');
@@ -78,7 +78,9 @@ function extractPerson(query, knownSenders) {
       clean.includes(`${sLower} ke saath`) ||
       clean.includes(`${sLower} se`) ||
       clean.includes(`${sLower} ki`) ||
-      clean.includes(`${sLower} ka`)
+      clean.includes(`${sLower} ka`) ||
+      clean.includes(`${sLower} or`) ||
+      clean.includes(`${sLower} and`)
     ) {
       return sender;
     }
@@ -118,20 +120,57 @@ function expandContext(matchedId, allMessages, windowSize = 5) {
 }
 
 /**
- * Executes Two-Tier Search Pipeline
+ * Executes Two-Tier Search Pipeline with calibrated relevance filters and edge case protection.
+ * Options: { page = 1, limit = 0 }
+ * If limit is 0 (or omitted), all valid matches are returned, and totalAvailable / hasMore are calculated.
  */
-async function searchChat(query) {
+async function searchChat(query, options = {}) {
+  const page = Math.max(1, parseInt(options.page, 10) || 1);
+  const limit = Math.max(0, parseInt(options.limit, 10) || 0);
+
+  // Edge case 1: Empty, whitespace or too short queries
+  if (!query || typeof query !== 'string' || !query.trim()) {
+    return {
+      query: '',
+      tierUsed: 'none',
+      badge: 'Invalid Query',
+      personFilter: null,
+      results: [],
+      totalAvailable: 0,
+      hasMore: false,
+      message: 'Please enter a search query.'
+    };
+  }
+
+  const trimmedQuery = query.trim().slice(0, 300);
+  const hasEmoji = /[\p{Emoji_Presentation}\p{Extended_Pictographic}]/u.test(trimmedQuery);
+  const alphanumericChars = trimmedQuery.replace(/[^a-zA-Z0-9]/g, '');
+
+  if (alphanumericChars.length < 2 && !hasEmoji) {
+    return {
+      query: trimmedQuery,
+      tierUsed: 'none',
+      badge: 'Query Too Short',
+      personFilter: null,
+      results: [],
+      totalAvailable: 0,
+      hasMore: false,
+      message: 'Please enter at least 2 alphanumeric characters or an emoji to search.'
+    };
+  }
+
   const allMessages = getMessages();
   const embeddingsMap = getEmbeddings();
 
   if (allMessages.length === 0) {
     return {
-      query,
+      query: trimmedQuery,
       tierUsed: 'none',
       badge: '⚠️ No Data',
       personFilter: null,
       results: [],
       totalAvailable: 0,
+      hasMore: false,
       message: 'No ingested messages found. Please run ingestion first.'
     };
   }
@@ -140,7 +179,7 @@ async function searchChat(query) {
   const knownSenders = Array.from(new Set(allMessages.map((m) => m.sender)));
 
   // 2. Extract Person Filter
-  const person = extractPerson(query, knownSenders);
+  const person = extractPerson(trimmedQuery, knownSenders);
 
   // Filter candidates if person is mentioned
   const candidatePool = person
@@ -148,7 +187,35 @@ async function searchChat(query) {
     : allMessages;
 
   // 3. Extract Keywords
-  const keywords = extractKeywords(query, person);
+  const keywords = extractKeywords(trimmedQuery, person);
+
+  // Edge case 2: Only person is specified and no other keywords or concepts
+  if (person && keywords.length === 0 && !hasEmoji) {
+    const personMessages = candidatePool.slice(0, 10);
+    const results = personMessages.map((msg) => ({
+      matchedMessage: msg,
+      score: 1,
+      reason: `Message from ${person}`,
+      contextWindow: expandContext(msg.id, allMessages, 5)
+    }));
+
+    const paginatedResults = limit > 0
+      ? results.slice((page - 1) * limit, page * limit)
+      : results;
+
+    return {
+      query: trimmedQuery,
+      tierUsed: 'person',
+      badge: `👤 Chats with ${person}`,
+      personFilter: person,
+      keywords: [],
+      totalAvailable: results.length,
+      hasMore: limit > 0 ? results.length > page * limit : results.length > 3,
+      page,
+      limit,
+      results: paginatedResults
+    };
+  }
 
   // ----------------------------------------------------
   // TIER 1: Keyword Search (Text, Topic, Emotion)
@@ -164,13 +231,19 @@ async function searchChat(query) {
       let matchedKeywords = [];
 
       for (const kw of keywords) {
-        // Exact substring in text or emotion or topic
-        // Preserves Tier 2 fallback: "adventure".includes("adventurous") is FALSE
-        if (textLower.includes(kw)) {
+        // Keyword match against text (with word boundary for short 2-char tokens) or topic / emotion stem
+        const matchesText = kw.length <= 2
+          ? new RegExp(`\\b${kw}\\b`, 'i').test(textLower)
+          : textLower.includes(kw);
+
+        const matchesEmotion = emotionLower.includes(kw) || kw.includes(emotionLower);
+        const matchesTopic = topicLower.includes(kw) || kw.includes(topicLower);
+
+        if (matchesText) {
           matchedKeywords.push(`text:"${kw}"`);
-        } else if (emotionLower.includes(kw)) {
+        } else if (matchesEmotion) {
           matchedKeywords.push(`emotion:"${kw}"`);
-        } else if (topicLower.includes(kw)) {
+        } else if (matchesTopic) {
           matchedKeywords.push(`topic:"${kw}"`);
         }
       }
@@ -185,32 +258,39 @@ async function searchChat(query) {
     }
   }
 
-  // If Tier 1 found matches, return immediately (fast, exact, cheap)
+  // If Tier 1 found matches, return matches with pagination support
   if (keywordHits.length > 0) {
     keywordHits.sort((a, b) => b.score - a.score);
-    const topHits = keywordHits.slice(0, 3);
 
-    const results = topHits.map((hit) => ({
+    const allTier1Results = keywordHits.map((hit) => ({
       matchedMessage: hit.message,
       score: hit.score,
       reason: hit.reason,
       contextWindow: expandContext(hit.message.id, allMessages, 5)
     }));
 
+    const paginatedResults = limit > 0
+      ? allTier1Results.slice((page - 1) * limit, page * limit)
+      : allTier1Results;
+
     return {
-      query,
+      query: trimmedQuery,
       tierUsed: 'keyword',
       badge: 'Keyword Match',
       personFilter: person,
       keywords,
-      results
+      totalAvailable: allTier1Results.length,
+      hasMore: limit > 0 ? allTier1Results.length > page * limit : allTier1Results.length > 3,
+      page,
+      limit,
+      results: paginatedResults
     };
   }
 
   // ----------------------------------------------------
   // TIER 2: Semantic / Tone Search (Embeddings + Topic)
   // ----------------------------------------------------
-  const queryVector = await embedText(query);
+  const queryVector = await embedText(trimmedQuery);
   const semanticScores = [];
 
   for (const msg of candidatePool) {
@@ -220,29 +300,62 @@ async function searchChat(query) {
       semanticScores.push({
         message: msg,
         score: Number(similarity.toFixed(4)),
-        reason: `Semantic cosine similarity score: ${(similarity * 100).toFixed(1)}% (Emotion: ${msg.emotion || 'neutral'}, Topic: ${msg.topic || 'chat'})`
+        reason: `Semantic tone & context match: ${(similarity * 100).toFixed(1)}% (Emotion: ${msg.emotion || 'neutral'}, Topic: ${msg.topic || 'chat'})`
       });
     }
   }
 
   // Sort by highest cosine similarity
   semanticScores.sort((a, b) => b.score - a.score);
-  const topSemanticHits = semanticScores.filter((item) => item.score > 0.15).slice(0, 3);
 
-  const results = topSemanticHits.map((hit) => ({
+  // Strictly calibrate threshold to eliminate false positives on unmentioned/unrelated queries
+  const isLocal = isLocalProvider();
+  const SEMANTIC_MIN_THRESHOLD = isLocal ? 0.40 : 0.30;
+
+  const topScore = semanticScores.length > 0 ? semanticScores[0].score : 0;
+
+  // If the top score is below the confidence threshold, there are NO true matches
+  if (topScore < SEMANTIC_MIN_THRESHOLD) {
+    return {
+      query: trimmedQuery,
+      tierUsed: 'none',
+      badge: 'No Matches Found',
+      personFilter: person,
+      keywords,
+      totalAvailable: 0,
+      hasMore: false,
+      noMatch: true,
+      results: [],
+      message: `No conversations found matching "${trimmedQuery}". Try searching for travel, adventure, food, work, or friends.`
+    };
+  }
+
+  // Adaptive cutoff: filter out matches that fall off sharply from top match
+  const adaptiveCutoff = Math.max(SEMANTIC_MIN_THRESHOLD, topScore * 0.50);
+  const validSemanticHits = semanticScores.filter((item) => item.score >= adaptiveCutoff);
+
+  const allTier2Results = validSemanticHits.map((hit) => ({
     matchedMessage: hit.message,
     score: hit.score,
     reason: hit.reason,
     contextWindow: expandContext(hit.message.id, allMessages, 5)
   }));
 
+  const paginatedResults = limit > 0
+    ? allTier2Results.slice((page - 1) * limit, page * limit)
+    : allTier2Results;
+
   return {
-    query,
+    query: trimmedQuery,
     tierUsed: 'semantic',
     badge: '🎯 Tone / Semantic Match',
     personFilter: person,
     keywords,
-    results
+    totalAvailable: allTier2Results.length,
+    hasMore: limit > 0 ? allTier2Results.length > page * limit : allTier2Results.length > 3,
+    page,
+    limit,
+    results: paginatedResults
   };
 }
 

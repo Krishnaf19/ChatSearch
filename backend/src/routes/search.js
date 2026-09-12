@@ -9,12 +9,12 @@ const { searchChat } = require('../services/searchEngine');
  */
 router.post('/', async (req, res) => {
   try {
-    const { query } = req.body;
+    const { query, page, limit } = req.body;
     if (!query || typeof query !== 'string' || !query.trim()) {
       return res.status(400).json({ error: 'Search query is required' });
     }
 
-    const searchResponse = await searchChat(query.trim());
+    const searchResponse = await searchChat(query.trim(), { page, limit });
     return res.json(searchResponse);
   } catch (err) {
     console.error('[Search Error]:', err);

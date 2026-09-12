@@ -1,151 +1,170 @@
-# searchChat — Two-Tier Group Chat Search Engine
+# searchChat
 
-A search system built specifically for large group chats where traditional keyword search (Ctrl+F or SQL LIKE queries) fails:
-1. **Factual/Decision Questions** (*"When did we decide on Manali?"*) — where the resolution is negotiated across a multi-message back-and-forth, and the destination name isn't even repeated at the moment agreement is reached.
-2. **Emotional/Tone Questions** (*"My sad conversation with Rahul"* or *"Our adventurous talks"*) — where nobody typed the literal word "sad" or "adventurous", and the feeling is implicit.
+A modern search dashboard for group chat history, designed to find the right conversation quickly even when the exact words are not repeated verbatim.
 
----
-
-## 💡 The Two-Tier Strategy
-
-```
-Query comes in
-   │
-   ▼
-Extract person name (if mentioned) → hard filter
-   │
-   ▼
-TIER 1: Keyword search on filtered candidates (Text, Topic, Emotion tags)
-   │
-   ├── Found matches? ──► [RETURN: 🔍 Keyword Match] (Fast, exact, cheap)
-   │
-   └── Found nothing? 
-          │
-          ▼
-       TIER 2: Semantic / Tone search (Embeddings + Cosine similarity)
-          │
-          └──► [RETURN: 🎯 Tone / Semantic Match] (Meaning-based)
-                 │
-                 ▼
-              expandContext() (+/- 5 messages surrounding match)
-```
+This project combines a lightweight two-tier retrieval pipeline with a clean frontend interface. It is useful for searching across decisions, emotional moments, travel plans, and context-heavy discussions that are spread across multiple messages.
 
 ---
 
-## 🛠️ Tech Stack
+## Overview
 
-- **Frontend**: React 18, Vite, Redux Toolkit, React-Redux, Axios, Lucide Icons, Plain CSS
-- **Backend**: Node.js, Express.js, CORS, Morgan, Dotenv
-- **Data Layer**: Flat JSON files (`data/raw/`, `data/processed/`, `data/embeddings/`)
-- **Embeddings & Tagging**:
-  - Zero-config built-in deterministic semantic vectorizer fallback (works 100% offline out-of-the-box!)
-  - Pluggable support for **Voyage AI**, **OpenAI**, and **Anthropic Claude** / **Gemini** via `.env`.
-- **Similarity**: Hand-written Cosine Similarity (~10 lines).
+Group chat search is often harder than it looks because users do not always search by exact phrasing. They may ask things like:
+
+- "When did we decide on Manali?"
+- "Our sad conversation with Rahul"
+- "Adventurous talks from the trip"
+
+Traditional keyword-only matching often misses these requests. This app solves that by combining:
+
+1. Exact text and tag-based matching
+2. Semantic similarity matching for tone and meaning
+3. Context expansion so users can see the surrounding conversation thread
 
 ---
 
-## 🚀 Quick Start
+## Features
 
-### 1. Install Dependencies
+- Fast keyword-first search for literal matches and topic/emotion clues
+- Semantic fallback for meaning-based queries
+- Person-aware filtering when a name is mentioned in the query
+- Context window expansion around the matched message
+- Friendly dashboard UI for exploring results and browsing messages
+- Local-first setup with optional integrations for external embedding providers
 
-In the root directory:
+---
+
+## Mocked vs Real Data
+
+This repository includes a demo dataset to make the app easy to run and understand without needing a production chat export.
+
+- Mocked/demo data: `backend/data/raw/chat_export.json`
+- Mocked sample indexing: `backend/data/processed/messages.json`
+- Mocked embeddings: `backend/data/embeddings/message_embeddings.json`
+- Real app flow: the backend also supports ingesting live chat data via the `/api/ingest` route and then searching it through the same pipeline
+
+In other words, the sample dataset is intended for local demos, while the application architecture is designed to work with real exported conversations in the same format.
+
+---
+
+## Tech Stack
+
+- Frontend: React, Vite, Redux Toolkit, Axios, Lucide Icons
+- Backend: Node.js, Express
+- Data: JSON-based chat export, processed message metadata, embeddings store
+- Search: Keyword retrieval + cosine similarity for semantic matching
+
+---
+
+## Project Structure
+
 ```bash
-npm run install:all
-```
-*(Or run `npm install` inside both `backend` and `frontend`)*
-
-### 2. Run the Automated Demo Script
-
-Verify all 3 canonical scenarios instantly without touching a browser:
-```bash
-npm run demo
-```
-This runs `backend/test-demo.js`:
-- Ingests the sample group chat (`data/raw/chat_export.json`)
-- Runs Query 1: `"when did we decide on Manali"` ➔ Hits **Tier 1 (Keyword)** & returns the entire cottage booking thread
-- Runs Query 2: `"my sad talk with rahul"` ➔ Filters to **Rahul**, hits **Tier 1 (Emotion Tag: sadness)** & returns the career venting thread
-- Runs Query 3: `"my adventurous talks with rahul"` ➔ Filters to **Rahul**, misses Tier 1, falls through to **Tier 2 (Semantic / Tone)** & returns the cliff jumping & grade-4 rapids thread
-
-### 3. Run the Development Servers
-
-Start Backend (Port 5000):
-```bash
-npm run dev:backend
-```
-
-Start Frontend (Port 5173):
-```bash
-npm run dev:frontend
-```
-
-Open [http://localhost:5173](http://localhost:5173) in your browser.
-
----
-
-## ⚙️ Configuration & Environment Variables
-
-Copy `backend/.env.example` to `backend/.env` to configure external providers if desired:
-
-```env
-PORT=5000
-
-# Provider: local (default, zero-config), voyage, or openai
-EMBEDDING_PROVIDER=local
-
-# Voyage AI
-# VOYAGE_API_KEY=your_key_here
-# VOYAGE_MODEL=voyage-3-lite
-
-# OpenAI
-# OPENAI_API_KEY=your_key_here
-# OPENAI_EMBEDDING_MODEL=text-embedding-3-small
-
-# Anthropic Claude (for LLM ingestion tagging)
-# ANTHROPIC_API_KEY=your_claude_key
-```
-
-When no API key is specified, `searchChat` automatically uses its built-in semantic vectorizer and high-precision lexicon tagger so everything works out of the box.
-
----
-
-## 📂 Project Structure
-
-```
 searchChat/
 ├── backend/
 │   ├── data/
 │   │   ├── raw/
-│   │   │   └── chat_export.json         # Raw chat messages
+│   │   │   └── chat_export.json
 │   │   ├── processed/
-│   │   │   └── messages.json            # Tagged with emotion & topic
+│   │   │   └── messages.json
 │   │   └── embeddings/
-│   │       └── message_embeddings.json  # Precomputed vector embeddings
+│   │       └── message_embeddings.json
 │   ├── src/
 │   │   ├── routes/
-│   │   │   ├── ingest.js                # POST /api/ingest
-│   │   │   ├── search.js                # POST /api/search
-│   │   │   └── status.js                # GET /api/status, GET /api/messages
+│   │   │   ├── ingest.js
+│   │   │   ├── search.js
+│   │   │   └── status.js
 │   │   ├── services/
-│   │   │   ├── embeddings.js            # Voyage / OpenAI / local vectorizer
-│   │   │   ├── searchEngine.js          # Two-tier pipeline + person + context expansion
-│   │   │   └── tagger.js                # Emotion and topic tagger
+│   │   │   ├── embeddings.js
+│   │   │   ├── searchEngine.js
+│   │   │   └── tagger.js
 │   │   ├── utils/
-│   │   │   └── similarity.js            # Hand-written cosine similarity (~10 lines)
-│   │   └── server.js                    # Express app
-│   ├── test-demo.js                     # End-to-end automated verification script
+│   │   │   └── similarity.js
+│   │   └── server.js
+│   ├── test-demo.js
 │   └── package.json
 ├── frontend/
 │   ├── src/
 │   │   ├── features/
 │   │   │   └── search/
-│   │   │       ├── searchSlice.js       # Redux Toolkit state lifecycle
-│   │   │       └── SearchPage.jsx       # UI with badges, search bar, & context thread
-│   │   ├── App.css                      # Modern responsive styling
+│   │   │       ├── SearchPage.jsx
+│   │   │       └── searchSlice.js
+│   │   ├── App.css
 │   │   ├── App.jsx
 │   │   ├── main.jsx
-│   │   └── store.js                     # Redux store
+│   │   └── store.js
+│   ├── index.html
 │   ├── package.json
 │   └── vite.config.js
-├── package.json                         # Root workspace scripts
-└── README.md
+├── package.json
+├── README.md
+└── .gitignore
 ```
+
+---
+
+## Getting Started
+
+### 1. Install dependencies
+
+From the project root:
+
+```bash
+npm run install:all
+```
+
+This installs both the frontend and backend packages.
+
+### 2. Run the backend
+
+```bash
+npm run dev:backend
+```
+
+The backend serves the API on:
+
+- http://localhost:5000
+
+### 3. Run the frontend
+
+```bash
+npm run dev:frontend
+```
+
+The frontend runs on:
+
+- http://localhost:5173
+
+### 4. Run the demo script
+
+```bash
+npm run demo
+```
+
+This executes the backend demo flow and validates the main search scenarios against the mock sample chat dataset.
+
+> The demo data is intentionally lightweight and representative. It is designed to showcase the search behavior clearly without requiring any external data source.
+
+---
+
+## Example Queries
+
+The app is designed to answer questions like:
+
+- Manali trip when was it decided?
+- Rahul sad messages
+- Adventurous talks with Rahul
+- Weekend travel planning
+- Work stress and late-night chat context
+
+---
+
+## Notes
+
+- The app works locally without external services by default.
+- Embedding integrations can be configured later if you want to replace the local default behavior with a cloud provider.
+- The UI is intentionally simple and readable so it can be extended for production search workflows.
+
+---
+
+## License
+
+This project is provided for learning and demonstration purposes.
