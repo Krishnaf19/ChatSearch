@@ -9,9 +9,9 @@
 }
 
 .search-page {
-  max-width: 860px;
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 40px 24px 80px;
+  padding: 36px 18px 80px;
 }
 
 /* ---- Header ---- */
@@ -89,6 +89,8 @@
 /* ---- Search Bar ---- */
 .search-section {
   margin-bottom: 28px;
+  padding-top: 18px;
+  border-top: 1px solid #e5e7eb;
 }
 
 .search-intro {
