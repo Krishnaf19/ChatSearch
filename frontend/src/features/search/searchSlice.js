@@ -67,6 +67,21 @@ export const fetchMemories = createAsyncThunk(
 );
 
 /**
+ * Async thunk to fetch topics and member leaderboard
+ */
+export const fetchLeaderboard = createAsyncThunk(
+  'search/fetchLeaderboard',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${API_BASE}/leaderboard`);
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.error || err.message || 'Failed to fetch leaderboard');
+    }
+  }
+);
+
+/**
  * Async thunk to trigger ingestion
  */
 export const runIngest = createAsyncThunk(
@@ -143,6 +158,11 @@ const initialState = {
   memoriesLoading: false,
   memoriesError: null,
   selectedMemoryDate: '2024-03-10',
+
+  // Feature 3: Topics Leaderboard
+  leaderboardData: null,
+  leaderboardLoading: false,
+  leaderboardError: null,
 
   activeTab: 'search', // 'search', 'memories', 'leaderboard'
   timelineFilter: 'all',
@@ -244,6 +264,21 @@ const searchSlice = createSlice({
       .addCase(fetchMemories.rejected, (state, action) => {
         state.memoriesLoading = false;
         state.memoriesError = action.payload || 'Failed to fetch memories';
+      });
+
+    // Leaderboard lifecycle
+    builder
+      .addCase(fetchLeaderboard.pending, (state) => {
+        state.leaderboardLoading = true;
+        state.leaderboardError = null;
+      })
+      .addCase(fetchLeaderboard.fulfilled, (state, action) => {
+        state.leaderboardLoading = false;
+        state.leaderboardData = action.payload;
+      })
+      .addCase(fetchLeaderboard.rejected, (state, action) => {
+        state.leaderboardLoading = false;
+        state.leaderboardError = action.payload || 'Failed to fetch leaderboard';
       });
 
     // Ingest lifecycle

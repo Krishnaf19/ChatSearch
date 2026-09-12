@@ -7,6 +7,7 @@ const ingestRoute = require('./routes/ingest');
 const searchRoute = require('./routes/search');
 const statusRoute = require('./routes/status');
 const memoriesRoute = require('./routes/memories');
+const leaderboardRoute = require('./routes/leaderboard');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -24,6 +25,7 @@ app.use(morgan('dev'));
 app.use('/api/ingest', ingestRoute);
 app.use('/api/search', searchRoute);
 app.use('/api/memories', memoriesRoute);
+app.use('/api/leaderboard', leaderboardRoute);
 app.use('/api', statusRoute);
 
 // Root healthcheck
@@ -36,6 +38,7 @@ app.get('/', (req, res) => {
       ingest: 'POST /api/ingest',
       search: 'POST /api/search',
       memories: 'GET /api/memories',
+      leaderboard: 'GET /api/leaderboard',
       status: 'GET /api/status',
       messages: 'GET /api/messages'
     }

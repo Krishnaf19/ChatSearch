@@ -1229,6 +1229,506 @@
   font-size: 13px;
 }
 
+/* ============================================
+   Feature 3: Topics Leaderboard Styling
+   ============================================ */
+.leaderboard-container {
+  margin-top: 10px;
+}
+
+.leaderboard-header {
+  margin-bottom: 24px;
+}
+
+.leaderboard-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.leaderboard-header h2 {
+  font-size: 28px;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.04em;
+  margin: 0 0 8px;
+}
+
+.leaderboard-header p {
+  margin: 0;
+  font-size: 15px;
+  color: #64748b;
+  line-height: 1.6;
+  max-width: 700px;
+}
+
+/* Stat Cards */
+.leaderboard-stat-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.stat-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.stat-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stat-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #64748b;
+}
+
+.stat-val {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.2;
+  margin: 2px 0;
+}
+
+.stat-sub {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+/* Leaderboard Section */
+.leaderboard-section {
+  margin-bottom: 32px;
+}
+
+.section-title-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 8px;
+}
+
+.section-title-row h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.section-hint {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.topics-leaderboard-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.topic-rank-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.topic-rank-card:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+}
+
+.topic-rank-card.rank-gold {
+  border-left: 4px solid #f59e0b;
+}
+
+.topic-rank-card.rank-silver {
+  border-left: 4px solid #94a3b8;
+}
+
+.topic-rank-card.rank-bronze {
+  border-left: 4px solid #d97706;
+}
+
+.card-top-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.topic-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.topic-icon-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.topic-title-group h4 {
+  margin: 0 0 2px;
+  font-size: 17px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.topic-tagline-text {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.rank-pill {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 12px;
+  white-space: nowrap;
+}
+
+.rank-pill.rank-gold {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.rank-pill.rank-silver {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.rank-pill.rank-bronze {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.rank-pill.rank-normal {
+  background: #f8fafc;
+  color: #64748b;
+}
+
+/* Meter */
+.topic-volume-meter {
+  margin-bottom: 14px;
+}
+
+.volume-label-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-bottom: 6px;
+}
+
+.volume-count {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.volume-pct {
+  color: #64748b;
+}
+
+.meter-track {
+  width: 100%;
+  height: 8px;
+  background: #f1f5f9;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.meter-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+/* Topic Breakdown */
+.topic-breakdown-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 14px;
+  background: #f8fafc;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.top-contributor-box, .dominant-emotion-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.box-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.contributor-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.mini-avatar {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.contrib-name {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.contrib-count {
+  color: #64748b;
+  font-size: 11px;
+}
+
+.all-contributors-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.sub-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.contrib-avatars-list {
+  display: flex;
+  gap: 6px;
+}
+
+.member-avatar-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 12px;
+}
+
+.avatar-count {
+  font-size: 10px;
+  opacity: 0.8;
+  font-weight: 500;
+}
+
+.topic-sample-quote {
+  font-size: 13px;
+  color: #475569;
+  background: #fff;
+  border: 1px solid #f1f5f9;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+.quote-author {
+  font-weight: 700;
+  color: #0f172a;
+  margin-right: 6px;
+}
+
+.quote-body {
+  font-style: italic;
+}
+
+.topic-card-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.explore-topic-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.explore-topic-btn:hover {
+  background: #0f172a;
+  color: #fff;
+  border-color: #0f172a;
+}
+
+/* Members Grid */
+.members-grid-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.member-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+}
+
+.member-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.member-large-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.member-details {
+  flex: 1;
+}
+
+.member-details h4 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.member-stat {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.member-rank-badge {
+  font-size: 12px;
+  font-weight: 800;
+  color: #94a3b8;
+  background: #f8fafc;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.member-fav-topic {
+  font-size: 12px;
+  margin-bottom: 10px;
+  display: flex;
+  gap: 6px;
+}
+
+.fav-label {
+  color: #64748b;
+}
+
+.fav-val {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.member-topics-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+  flex: 1;
+}
+
+.member-topic-tag {
+  font-size: 11px;
+  background: #f1f5f9;
+  color: #475569;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.member-chat-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.member-chat-btn:hover {
+  background: #0f172a;
+  color: #fff;
+  border-color: #0f172a;
+}
+
 /* ---- Responsive ---- */
 @media (max-width: 640px) {
   .search-page {

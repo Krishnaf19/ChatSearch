@@ -10,6 +10,7 @@ import {
   setActiveTab
 } from './searchSlice';
 import MemoriesPage from '../memories/MemoriesPage';
+import LeaderboardPage from '../leaderboard/LeaderboardPage';
 import {
   Sparkles,
   Zap,
@@ -24,7 +25,9 @@ import {
   BriefcaseBusiness,
   ChevronDown,
   SearchX,
-  Search
+  Search,
+  Trophy,
+  Flame
 } from 'lucide-react';
 
 const QUICK_TOPICS = [
@@ -191,10 +194,21 @@ export default function SearchPage() {
           <span>Group Highlights & &ldquo;On This Day&rdquo;</span>
           <span className="nav-tab-badge">Memories</span>
         </button>
+        <button
+          type="button"
+          className={`nav-tab-btn${activeTab === 'leaderboard' ? ' active' : ''}`}
+          onClick={() => dispatch(setActiveTab('leaderboard'))}
+        >
+          <Trophy size={15} />
+          <span>Topics Leaderboard</span>
+          <span className="nav-tab-badge">Top Subjects</span>
+        </button>
       </nav>
 
       {activeTab === 'memories' ? (
         <MemoriesPage />
+      ) : activeTab === 'leaderboard' ? (
+        <LeaderboardPage />
       ) : (
         <>
           {/* Search */}
