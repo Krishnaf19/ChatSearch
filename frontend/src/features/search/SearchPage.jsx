@@ -216,9 +216,7 @@ export default function SearchPage() {
         <div className="search-intro">
           <h2>Find the right conversation</h2>
           <p>
-            Search through your group chat history to quickly locate decisions, emotions,
-            plans, and memorable moments shared by everyone.
-            <span>Jump into the exact thread, review the surrounding context, and understand what happened in seconds.</span>
+            Search through your group chat history to quickly locate decisions, emotions, plans, and memorable moments shared by everyone.
           </p>
         </div>
 
